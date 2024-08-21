@@ -10,7 +10,7 @@ const Mask = styled.div`
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 2;
 `;
 
 const ModalContainer = styled.div`

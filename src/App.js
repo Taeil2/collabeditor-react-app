@@ -7,9 +7,6 @@ import styled from "styled-components";
 import Home from "./pages/index";
 import Document from "./pages/document";
 
-import LoginButton from "./components/LoginButton";
-import LogoutButton from "./components/LogoutButton";
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const Loading = styled.div`
@@ -39,11 +36,20 @@ export default function App() {
     if (typeof window !== "undefined") {
       setLocation(window.location.origin);
     }
+
+    // fetch users
+    // logged in user is not in users, create a new user
   }, []);
 
-  console.log("isLoading", isLoading);
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("user", user);
+  {
+    /* <img src={user.picture} alt={user.name} />
+       <h2>{user.name}</h2>
+       <p>{user.email}</p> */
+  }
+
+  // console.log("isLoading", isLoading);
+  // console.log("isAuthenticated", isAuthenticated);
+  // console.log("user", user);
 
   return (
     <Auth0Provider
@@ -70,9 +76,6 @@ export default function App() {
               <LogoutButton />
             </div>
           )} */}
-          {/* <img src={user.picture} alt={user.name} />
-          <h2>{user.name}</h2>
-          <p>{user.email}</p> */}
         </main>
       </GlobalStyles>
     </Auth0Provider>

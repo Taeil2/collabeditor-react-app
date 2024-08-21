@@ -1,3 +1,16 @@
+## To Do
+
+- authenticated login
+- save user if it does not exist
+- set user if it does
+- modals
+  - what is your name
+  - Collabeditors
+- socket.io integration
+- cursor
+- highlighting
+- publish
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

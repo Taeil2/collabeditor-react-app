@@ -76,8 +76,8 @@ export default function Document() {
       }
     }
 
-    console.log("setting", ghostDivRef.current.children);
-    console.log("setting", selectionPosition.current);
+    // console.log("setting", ghostDivRef.current.children);
+    // console.log("setting", selectionPosition.current);
 
     // setCursor()
   }, [ghostDivContent]);

@@ -48,6 +48,21 @@ const Card = styled.div`
 export default function DocumentCard(props) {
   const { document } = props;
 
+  const date = new Date(document.updated);
+  const hours = date.getHours() % 12;
+  let ampm = "am";
+  if (hours > 12) {
+    ampm = "pm";
+  }
+  const dateString = (
+    <span>
+      {date.getMonth()}/{date.getDate()}
+      &nbsp;&nbsp;
+      {hours}:{date.getMinutes()}
+      {ampm}
+    </span>
+  );
+
   return (
     <Link to="/document">
       <Card>
@@ -69,7 +84,7 @@ export default function DocumentCard(props) {
         <div>
           <div>
             <h6>updated</h6>
-            <p>{document?.updated}</p>
+            <p>{dateString}</p>
           </div>
           <Button
             icon={<FaRegTrashAlt />}
