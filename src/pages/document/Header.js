@@ -45,7 +45,7 @@ export default function Header(props) {
   return (
     <Container>
       <div>
-        <Link href="/">
+        <Link to="/">
           <IoIosArrowBack /> back to documents
         </Link>
         <input type="text" placeholder="Document Name" />

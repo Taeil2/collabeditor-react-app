@@ -49,7 +49,7 @@ export default function DocumentCard(props) {
   const { document } = props;
 
   return (
-    <Link href="/document">
+    <Link to="/document">
       <Card>
         <div>
           <h3>{document?.name}</h3>
