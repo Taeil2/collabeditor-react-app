@@ -12,15 +12,16 @@ import { FaRegTrashAlt } from "react-icons/fa";
 
 const CollabeditorRow = styled.div`
   display: grid;
-  grid-template-columns: 25px 100px 100px 50px;
+  // grid-template-columns: 25px 100px 100px 50px;
+  grid-template-columns: 100px 100px 50px;
   column-gap: 10px;
   margin-bottom: 10px;
   .name {
     margin-top: 2px;
   }
-  &.owner {
-    margin-bottom: 3px;
-  }
+  // &.owner {
+  //   margin-bottom: 3px;
+  // }
 `;
 
 const Form = styled.form`
@@ -50,18 +51,18 @@ export default function CollabeditorsModal(props) {
     <Modal closeButton={true}>
       <h4>Collabeditors</h4>
       <CollabeditorRow>
-        <div></div>
+        {/* <div></div> */}
         <div></div>
         <label>Permissions</label>
         <div></div>
       </CollabeditorRow>
       <CollabeditorRow className="owner">
-        <Collabeditor
+        {/* <Collabeditor
           collabeditor={document?.owner}
           index={0}
           key={`collabeditor-0`}
           showTag={false}
-        />
+        /> */}
         <div className="name">{document?.owner.name}</div>
         <select>
           <option>all</option>
@@ -78,12 +79,12 @@ export default function CollabeditorsModal(props) {
       </CollabeditorRow>
       {document?.collabeditors.map((collabeditor, i) => (
         <CollabeditorRow>
-          <Collabeditor
+          {/* <Collabeditor
             collabeditor={collabeditor}
             index={i + 1}
             key={`collabeditor-0${i + 1}`}
             showTag={false}
-          />
+          /> */}
           <div className="name">{collabeditor?.name}</div>
           <select>
             <option>all</option>

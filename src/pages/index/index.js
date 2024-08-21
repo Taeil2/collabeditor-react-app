@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import DocumentCard from "./DocumentCard";
 
-import sampleDocuments from "../../sampleDocuments";
-
 // if user has no name, show name modal
 
 export default function Home() {
