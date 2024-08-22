@@ -43,8 +43,8 @@ export default function NameModal(props) {
           onChange={(e) => {
             setName(e.target.value);
           }}
-          autofocus
-        ></input>
+          autoFocus
+        />
         <Button type="submit" text="okay" />
       </Form>
     </Modal>

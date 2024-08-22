@@ -45,12 +45,15 @@ const GlobalStyles = styled.div`
     font-family: "Open Sans";
     font-weight: 400;
     font-size: 24px;
+    margin-bottom: 20px;
   }
 
   h5 {
     font-family: "Open Sans";
     font-weight: 400;
     font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 20px;
   }
 
   h6 {

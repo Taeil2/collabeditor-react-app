@@ -12,34 +12,45 @@ import { FaRegTrashAlt } from "react-icons/fa";
 
 const CollabeditorRow = styled.div`
   display: grid;
-  // grid-template-columns: 25px 100px 100px 50px;
+  // grid-template-columns: 25px 100px 100px 50px; // to enable collabeditor circles
   grid-template-columns: 100px 100px 50px;
   column-gap: 10px;
   margin-bottom: 10px;
+  &.permissions-label {
+    margin-bottom: 5px;
+  }
   .name {
     margin-top: 2px;
   }
   // &.owner {
   //   margin-bottom: 3px;
   // }
+  button {
+    width: fit-content;
+  }
 `;
 
 const Form = styled.form`
-  display: grid;
-  grid-template-columns: 200px 50px 50px;
-  column-gap: 10px;
+  & > div {
+    display: grid;
+    grid-template-columns: 200px 100px 50px;
+    column-gap: 10px;
+  }
   label {
     display: block;
     font-size: 16px;
     color: ${grays.gray6};
     margin-bottom: 10px;
   }
+  button {
+    width: fit-content;
+  }
 `;
 
 const names = ["taeil", "taki", "tahoe", "taco"];
 
 export default function CollabeditorsModal(props) {
-  const { document } = props;
+  const { document, setShowModal } = props;
 
   const [name, setName] = useState("");
 
@@ -48,15 +59,19 @@ export default function CollabeditorsModal(props) {
   };
 
   return (
-    <Modal closeButton={true}>
+    <Modal
+      closeButton={true}
+      setShowModal={setShowModal}
+      clickMaskToClose={true}
+    >
       <h4>Collabeditors</h4>
-      <CollabeditorRow>
+      <CollabeditorRow className="permissions-label">
         {/* <div></div> */}
         <div></div>
         <label>Permissions</label>
         <div></div>
       </CollabeditorRow>
-      <CollabeditorRow className="owner">
+      <CollabeditorRow className="owner" key={`collabeditor-1`}>
         {/* <Collabeditor
           collabeditor={document?.owner}
           index={0}
@@ -78,7 +93,7 @@ export default function CollabeditorsModal(props) {
         />
       </CollabeditorRow>
       {document?.collabeditors.map((collabeditor, i) => (
-        <CollabeditorRow>
+        <CollabeditorRow key={`collabeditor-${i}`}>
           {/* <Collabeditor
             collabeditor={collabeditor}
             index={i + 1}
@@ -103,7 +118,10 @@ export default function CollabeditorsModal(props) {
       <h5>Add Collabeditor</h5>
       <Form onSubmit={onSubmit}>
         <div>
-          <label for="name">Name</label>
+          <label htmlFor="name">Name</label>
+          <label htmlFor="permissions">Permissions</label>
+        </div>
+        <div>
           <input
             type="text"
             id="name"
@@ -111,15 +129,12 @@ export default function CollabeditorsModal(props) {
               setName(e.target.value);
             }}
           />
-        </div>
-        <div>
-          <label for="permissions">Permissions</label>
           <select id="permissions">
             <option>all</option>
             <option>edit</option>
             <option>view</option>
           </select>
-          <Button type="submit" text="okay" />
+          <Button type="submit" text="add" />
         </div>
       </Form>
     </Modal>

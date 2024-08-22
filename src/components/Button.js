@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { colors } from "../styles/styles";
+import { colors, grays } from "../styles/styles";
 
 const StyledButton = styled.button`
   display: inline-flex;
@@ -9,6 +9,8 @@ const StyledButton = styled.button`
       return colors.red;
     } else if (props.$color === "gray") {
       return colors.gray;
+    } else if (props.$color === "transparent") {
+      return "transparent";
     } else {
       return colors.cyan;
     }
@@ -19,6 +21,8 @@ const StyledButton = styled.button`
         return colors.darkRed;
       } else if (props.$color === "gray") {
         return colors.darkGray;
+      } else if (props.$color === "transparent") {
+        return "transparent";
       } else {
         return colors.darkCyan;
       }
@@ -28,7 +32,14 @@ const StyledButton = styled.button`
   padding: 0 10px;
   border-radius: 5px;
   border: 0;
-  color: #fff;
+  // color: #fff;
+  color: ${(props) => {
+    if (props.$color === "transparent") {
+      return grays.gray8;
+    } else {
+      return "#fff";
+    }
+  }};
   cursor: pointer;
   svg + span {
     margin-left: 10px;
@@ -38,10 +49,10 @@ const StyledButton = styled.button`
 
 // color options are cyan, red, gray
 export default function Button(props) {
-  const { icon, text, onClick, color } = props;
+  const { icon, text, onClick, color, ...otherProps } = props;
 
   return (
-    <StyledButton onClick={onClick} $color={color}>
+    <StyledButton onClick={onClick} $color={color} {...otherProps}>
       {icon}
       {text && <span>{text}</span>}
     </StyledButton>

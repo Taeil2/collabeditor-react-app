@@ -32,9 +32,6 @@ const Container = styled.div`
   }
   > div:last-of-type {
     margin-top: 32px;
-    button {
-      margin-left: 10px;
-    }
   }
 `;
 
@@ -70,7 +67,12 @@ export default function Header(props) {
             setCollabeditorsOpen(true);
           }}
         />
-        {collabeditorsOpen && <CollabeditorsModal document={document} />}
+        {collabeditorsOpen && (
+          <CollabeditorsModal
+            document={document}
+            setShowModal={setCollabeditorsOpen}
+          />
+        )}
       </div>
     </Container>
   );
