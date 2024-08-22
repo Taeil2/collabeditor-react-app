@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -38,60 +39,51 @@ const Content = styled.div`
 `;
 
 export default function Document() {
-  const [value, setValue] = useState(sampleDocuments[0].content);
+  const [document, setDocument] = useState();
+  const [value, setValue] = useState();
   const dragging = useRef(false);
   const selection = useRef([0, 0]);
-  const selectionPosition = useRef([
+  const [selectionPosition, setSelectionPosition] = useState([
     [1, 0],
     [1, 0],
   ]);
   const ghostDivRef = useRef(null);
   const [ghostDivContent, setGhostDivContent] = useState();
 
+  const params = useParams();
+
   useEffect(() => {
-    if (ghostDivRef.current.children.length) {
-      // set first cursor
-      selectionPosition.current[0] = [
-        ghostDivRef.current.children[0]?.offsetLeft +
-          ghostDivRef.current.children[0]?.offsetWidth,
-        ghostDivRef.current.children[0]?.offsetTop -
-          ghostDivRef.current.offsetTop,
-      ];
-      if (ghostDivRef.current.children.length === 1) {
-        // second is same as first
-        selectionPosition.current[1] = [
-          ghostDivRef.current.children[0]?.offsetLeft +
-            ghostDivRef.current.children[0]?.offsetWidth,
-          ghostDivRef.current.children[0]?.offsetTop -
-            ghostDivRef.current.offsetTop,
-        ];
-      } else {
-        // range is selected
-        selectionPosition.current[1] = [
-          ghostDivRef.current.children[1]?.offsetLeft +
-            ghostDivRef.current.children[0]?.offsetWidth,
-          ghostDivRef.current.children[1]?.offsetTop -
-            ghostDivRef.current.offsetTop,
-        ];
-      }
-    }
+    fetch(`http://localhost:5050/documents/${params.id}`)
+      .then((resp) => resp.json())
+      .then((json) => {
+        setDocument(json);
+        setValue(json.content);
+      });
+  }, []);
 
-    // console.log("setting", ghostDivRef.current.children);
-    // console.log("setting", selectionPosition.current);
+  useEffect(() => {
+    setGhostDiv();
+  }, [value]);
 
-    // setCursor()
+  useEffect(() => {
+    setCursor();
   }, [ghostDivContent]);
+
+  const textareaOnChange = (e) => {
+    setValue(e.target.value);
+    selection.current = [e.target.selectionStart, e.target.selectionEnd];
+  };
 
   const textareaMouseDown = (e) => {
     dragging.current = true;
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    // setCursor()
+    setGhostDiv();
     textareaDragging(e);
   };
 
   const textareaDragging = (e) => {
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    // setCursor()
+    setGhostDiv();
     setTimeout(() => {
       if (dragging.current) {
         textareaDragging(e);
@@ -102,10 +94,10 @@ export default function Document() {
   const textareaMouseUp = (e) => {
     dragging.current = false;
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    // setCursor()
+    setGhostDiv();
   };
 
-  const setCursor = () => {
+  const setGhostDiv = () => {
     if (
       // cursor is at 0
       selection.current[0] === 0 &&
@@ -182,14 +174,41 @@ export default function Document() {
     }
   };
 
-  const textareaOnChange = (e) => {
-    setValue(e.target.value);
-    selection.current = [e.target.selectionStart, e.target.selectionEnd];
+  const setCursor = () => {
+    if (ghostDivRef.current.children.length) {
+      // set first cursor
+      const position1 = [
+        ghostDivRef.current.children[0]?.offsetLeft +
+          ghostDivRef.current.children[0]?.offsetWidth,
+        ghostDivRef.current.children[0]?.offsetTop -
+          ghostDivRef.current.offsetTop,
+      ];
+      let position2;
+      if (ghostDivRef.current.children.length === 1) {
+        // second is same as first
+        position2 = [
+          ghostDivRef.current.children[0]?.offsetLeft +
+            ghostDivRef.current.children[0]?.offsetWidth,
+          ghostDivRef.current.children[0]?.offsetTop -
+            ghostDivRef.current.offsetTop,
+        ];
+      } else {
+        // range is selected
+        position2 = [
+          ghostDivRef.current.children[1]?.offsetLeft +
+            ghostDivRef.current.children[0]?.offsetWidth,
+          ghostDivRef.current.children[1]?.offsetTop -
+            ghostDivRef.current.offsetTop,
+        ];
+      }
+
+      setSelectionPosition([position1, position2]);
+    }
   };
 
   return (
     <>
-      <Header document={sampleDocuments[0]} />
+      <Header document={document} />
       <Page>
         <Content>
           <textarea
@@ -199,7 +218,7 @@ export default function Document() {
             value={value}
           />
           <Cursor
-            collabeditor={sampleDocuments[0].owner}
+            collabeditor={document?.owner}
             index={1}
             selectionPosition={selectionPosition}
           />

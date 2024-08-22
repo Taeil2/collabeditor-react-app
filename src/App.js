@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "document",
+    path: "document/:id",
     element: <Document />,
   },
 ]);

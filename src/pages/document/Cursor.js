@@ -7,8 +7,8 @@ const Line = styled.div`
   position: absolute;
   width: 2px;
   height: 19px;
-  left: ${(props) => `${props.$selectionPosition.current[0][0]}px`};
-  top: ${(props) => `${props.$selectionPosition.current[0][1]}px`};
+  left: ${(props) => `${props.$selectionPosition[0][0]}px`};
+  top: ${(props) => `${props.$selectionPosition[0][1]}px`};
   background: ${(props) => {
     if (props.$index < 5) {
       return colorsArr[props.$index * 2];
@@ -49,7 +49,7 @@ export default function Cursor(props) {
   return (
     <Line $index={index} $selectionPosition={selectionPosition}>
       <TagContainer>
-        <Tag $index={index}>{collabeditor.name}</Tag>
+        <Tag $index={index}>{collabeditor?.name}</Tag>
       </TagContainer>
     </Line>
   );
