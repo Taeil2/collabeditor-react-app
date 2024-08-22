@@ -21,6 +21,9 @@ const Card = styled.div`
   cursor: pointer;
   > div:first-of-type {
     p {
+      max-height: 100px;
+      overflow: hidden;
+      --max-lines: 5
       color: ${grays.gray6};
     }
   }
@@ -63,6 +66,7 @@ export default function DocumentCard(props) {
     </span>
   );
 
+  // TODO: truncate document content with ellipsis
   return (
     <Link to="/document">
       <Card>
