@@ -29,15 +29,17 @@ const Content = styled.div`
     border: 1px solid #eee;
     font-family: Noto Sans;
     font-size: 14px;
-    // caret-color: transparent;
+    caret-color: transparent;
   }
   .ghostDiv {
     width: 100%;
     height: 100px;
     border: 1px solid #eee;
+    white-space: pre-wrap; // to investigate: break-spaces and pre-wrap work
   }
 `;
 
+// TODO: polish cursor tracking
 export default function Document() {
   const [document, setDocument] = useState();
   const [value, setValue] = useState();
@@ -74,24 +76,27 @@ export default function Document() {
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
   };
 
-  const textareaMouseDown = (e) => {
+  // on mouse or key down
+  const textareaMouseKeyDown = (e) => {
     dragging.current = true;
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
     setGhostDiv();
-    textareaDragging(e);
+    textareaDraggingScrolling(e);
   };
 
-  const textareaDragging = (e) => {
+  // dragging or scrolling
+  const textareaDraggingScrolling = (e) => {
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
     setGhostDiv();
     setTimeout(() => {
       if (dragging.current) {
-        textareaDragging(e);
+        textareaDraggingScrolling(e);
       }
     }, 100);
   };
 
-  const textareaMouseUp = (e) => {
+  // on mouse or key up
+  const textareaMouseKeyUp = (e) => {
     dragging.current = false;
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
     setGhostDiv();
@@ -212,9 +217,29 @@ export default function Document() {
       <Page>
         <Content>
           <textarea
-            onMouseDown={textareaMouseDown}
-            onMouseUp={textareaMouseUp}
             onChange={textareaOnChange}
+            onMouseDown={textareaMouseKeyDown}
+            onMouseUp={textareaMouseKeyUp}
+            onKeyDown={(e) => {
+              if (
+                e.code === "ArrowUp" ||
+                e.code === "ArrowRight" ||
+                e.code === "ArrowDown" ||
+                e.code === "ArrowLeft"
+              ) {
+                textareaMouseKeyDown(e);
+              }
+            }}
+            onKeyUp={(e) => {
+              if (
+                e.code === "ArrowUp" ||
+                e.code === "ArrowRight" ||
+                e.code === "ArrowDown" ||
+                e.code === "ArrowLeft"
+              ) {
+                textareaMouseKeyUp(e);
+              }
+            }}
             value={value}
           />
           <Cursor

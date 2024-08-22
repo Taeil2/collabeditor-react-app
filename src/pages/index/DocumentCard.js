@@ -67,8 +67,9 @@ export default function DocumentCard(props) {
   );
 
   // TODO: truncate document content with ellipsis
+  console.log(document);
   return (
-    <Link to={`/document/${document?.id}`}>
+    <Link to={`/document/${document?._id}`}>
       <Card>
         <div>
           <h3>{document?.name}</h3>

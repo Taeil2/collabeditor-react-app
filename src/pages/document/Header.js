@@ -39,13 +39,15 @@ export default function Header(props) {
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
   const { document } = props;
 
+  const [documentName, setDocumentName] = useState(document?.name);
+
   return (
     <Container>
       <div>
         <Link to="/">
           <IoIosArrowBack /> back to documents
         </Link>
-        <input type="text" placeholder="Document Name" />
+        <input type="text" placeholder="Document Name" value={documentName} />
       </div>
       <div>
         <Collabeditor
