@@ -41,13 +41,22 @@ export default function Header(props) {
 
   const [documentName, setDocumentName] = useState(document?.name);
 
+  const changeTitle = () => {
+    setDocumentName();
+  };
+
   return (
     <Container>
       <div>
         <Link to="/">
           <IoIosArrowBack /> back to documents
         </Link>
-        <input type="text" placeholder="Document Name" value={documentName} />
+        <input
+          type="text"
+          placeholder="Document Name"
+          value={documentName}
+          onChange={changeTitle}
+        />
       </div>
       <div>
         <Collabeditor

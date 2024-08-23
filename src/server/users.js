@@ -28,8 +28,8 @@ const addUser = async (email, name) => {
   return response;
 };
 
-const updateUser = async (name) => {
-  let response = await fetch(`${serverUrl}/`, {
+const updateUser = async (name, id) => {
+  let response = await fetch(`${serverUrl}/users/${id}`, {
     method: "PATCH",
     headers: {
       "content-type": "application/json",

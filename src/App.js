@@ -32,7 +32,6 @@ export default function App() {
   const fetchUsers = async () => {
     const fetchedUsers = await getUsers();
     setUsers(fetchedUsers);
-    console.log(fetchedUsers);
   };
 
   return (

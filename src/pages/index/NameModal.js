@@ -1,10 +1,12 @@
+import { useState } from "react";
 import styled from "styled-components";
 
 import Modal from "../../components/Modal";
-
 import Button from "../../components/Button";
-import { useState } from "react";
+
 import { grays } from "../../styles/styles";
+
+import { updateUser } from "../../server/users";
 
 const Form = styled.form`
   label {
@@ -20,22 +22,26 @@ const Form = styled.form`
 `;
 
 export default function NameModal(props) {
-  const { setChangeNameOpen, currentUser } = props;
+  const { setChangeNameOpen, currentUser, setCurrentUser } = props;
 
   const [name, setName] = useState(currentUser.name);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (name.match(/^ *$/) === null) {
       setChangeNameOpen(false);
+      await updateUser(name, currentUser._id);
+      const userUpdate = { ...currentUser };
+      userUpdate.name = name;
+      setCurrentUser({ name: name, ...currentUser });
     }
   };
 
   return (
     <Modal closeButton={false}>
       <Form onSubmit={onSubmit}>
-        <label for="name">What is your name?</label>
+        <label htmlFor="name">What is your name?</label>
         <input
           id="name"
           type="text"

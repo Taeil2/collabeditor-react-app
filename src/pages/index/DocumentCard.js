@@ -60,7 +60,7 @@ const Card = styled.div`
 `;
 
 export default function DocumentCard(props) {
-  const { document } = props;
+  const { document, documents, setDocuments } = props;
 
   const date = new Date(document.updated);
   const hours = date.getHours() % 12;
@@ -107,6 +107,10 @@ export default function DocumentCard(props) {
               onClick={(e) => {
                 e.preventDefault();
                 deleteDocument(document?._id);
+                let documentsList = documents.filter(
+                  (d) => d._id !== document?._id
+                );
+                setDocuments(documentsList);
               }}
               color="red"
             />

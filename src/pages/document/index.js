@@ -63,6 +63,11 @@ export default function Document(props) {
       });
   }, []);
 
+  // const fetchUsers = async () => {
+  //   const fetchedUsers = await getUsers();
+  //   setUsers(fetchedUsers);
+  // };
+
   useEffect(() => {
     setGhostDiv();
   }, [value]);

@@ -69,11 +69,11 @@ export default function Collabeditor(props) {
   return (
     <Container>
       <Circle $index={index}>
-        {collabeditor?.name && collabeditor?.name[0]}
+        {collabeditor?.name && collabeditor?.name[0]?.toLowerCase()}
       </Circle>
       {showTag && (
         <Tag className="tag" $index={index}>
-          {collabeditor?.name}
+          {collabeditor?.name?.toLowerCase()}
         </Tag>
       )}
       {index === 0 && <OwnerLabel>owner</OwnerLabel>}

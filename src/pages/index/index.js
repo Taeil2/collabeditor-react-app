@@ -19,7 +19,11 @@ export default function Home(props) {
   const { user } = useAuth0();
 
   useEffect(() => {
-    if (!currentUser) {
+    console.log(currentUser);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser && users) {
       // if there is no current user, set the current user
       const matchedUser = users.filter((u) => u.email === user.email);
       if (matchedUser.length) {
@@ -49,11 +53,18 @@ export default function Home(props) {
     }
   }, [currentUser]);
 
+  console.log(documents);
+
   return (
     <>
-      <Header currentUser={currentUser} />
+      <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
       {documents?.map((document, i) => (
-        <DocumentCard document={document} key={`document-${i}`} />
+        <DocumentCard
+          document={document}
+          key={`document-${i}`}
+          documents={documents}
+          setDocuments={setDocuments}
+        />
       ))}
     </>
   );
