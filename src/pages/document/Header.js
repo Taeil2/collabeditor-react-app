@@ -28,6 +28,7 @@ const Container = styled.div`
       border: 0;
       font-family: Open Sans;
       font-size: 32px;
+      height: 41px; // it was cutting off descenders
     }
   }
   > div:last-of-type {
@@ -64,7 +65,7 @@ export default function Header(props) {
           index={0}
           key={`collabeditor-0`}
         />
-        {document?.collabeditors.map((collabeditor, i) => (
+        {document?.collabeditors?.map((collabeditor, i) => (
           <Collabeditor
             collabeditor={collabeditor}
             index={i + 1}

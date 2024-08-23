@@ -7,7 +7,7 @@ const getDocuments = async (userId) => {
   return results;
 };
 
-const addDocument = async (userId, userName) => {
+const addDocument = async (userId) => {
   let response = await fetch(`${serverUrl}/documents`, {
     method: "POST",
     headers: {
@@ -15,11 +15,21 @@ const addDocument = async (userId, userName) => {
     },
     body: JSON.stringify({
       id: userId,
-      name: userName,
     }),
   }).then((resp) => resp.json());
 
   return response;
+};
+
+const updateDocument = async (updates) => {
+  //   let response = await fetch(`${serverUrl}/document/${id}`, {
+  //     method: "PATCH",
+  //     headers: {
+  //       "content-type": "application/json",
+  //     },
+  //     body: JSON.stringify(updates),
+  //   }).then((resp) => resp.json());
+  //   return response;
 };
 
 const deleteDocument = async (id) => {
@@ -28,4 +38,4 @@ const deleteDocument = async (id) => {
   });
 };
 
-export { getDocuments, addDocument, deleteDocument };
+export { getDocuments, addDocument, updateDocument, deleteDocument };

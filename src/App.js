@@ -60,7 +60,7 @@ export default function App() {
         {isLoading && !isAuthenticated && (
           <div>
             <Loading>Loading</Loading>
-            <LogoutButton />
+            <LoginButton />
           </div>
         )}
         {isLoading && isAuthenticated && (

@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import styled from "styled-components";
 
 import Header from "./Header";
 import Cursor from "./Cursor";
+
+import { updateDocument } from "../../server/documents";
 
 const Page = styled.div`
   width: 100%;
@@ -42,7 +43,7 @@ export default function Document(props) {
   const { users, setUsers } = props;
 
   const [document, setDocument] = useState();
-  const [value, setValue] = useState();
+  const [value, setValue] = useState("");
   const dragging = useRef(false);
   const selection = useRef([0, 0]);
   const [selectionPosition, setSelectionPosition] = useState([
@@ -79,6 +80,16 @@ export default function Document(props) {
   const textareaOnChange = (e) => {
     setValue(e.target.value);
     selection.current = [e.target.selectionStart, e.target.selectionEnd];
+
+    // TODO: store all document changes in a "state" across socket.io users. save the shared document at the right times.
+    // after 500 ms of not typing in the header
+    // after 500 ms of not typing in the body (any user)
+    // after any collabeditor change
+    // set a timer at 500 ms. if there are 500 ms in between key presses, save.
+    const timer = setTimeout(() => {
+      updateDocument(); // missing document data atm
+    }, 500);
+    clearInterval(timer);
   };
 
   // on mouse or key down
