@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Button from "../../components/Button";
 import ButtonGroup from "../../components/ButtonGroup";
@@ -10,6 +10,8 @@ import { MdLogout } from "react-icons/md";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import NameModal from "./NameModal";
+
+import { addDocument } from "../../server/documents";
 
 const Container = styled.div`
   display: flex;
@@ -26,9 +28,17 @@ const Container = styled.div`
   }
 `;
 
-export default function Header() {
+export default function Header(props) {
+  const { currentUser } = props;
+
   const [changeNameOpen, setChangeNameOpen] = useState(false);
   const { logout } = useAuth0();
+
+  useEffect(() => {
+    if (currentUser?.name === "") {
+      setChangeNameOpen(true);
+    }
+  }, [currentUser]);
 
   return (
     <Container>
@@ -37,8 +47,10 @@ export default function Header() {
         <Button
           icon={<FaPlus />}
           text="new document"
-          onClick={() => {
-            console.log("clicked");
+          onClick={async () => {
+            const result = await addDocument(currentUser._id);
+
+            window.location.href = `/document/${result.insertedId}`;
           }}
         />
       </div>
@@ -60,7 +72,12 @@ export default function Header() {
           },
         ]}
       />
-      {changeNameOpen && <NameModal setChangeNameOpen={setChangeNameOpen} />}
+      {changeNameOpen && (
+        <NameModal
+          setChangeNameOpen={setChangeNameOpen}
+          currentUser={currentUser}
+        />
+      )}
     </Container>
   );
 }

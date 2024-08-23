@@ -6,8 +6,6 @@ import styled from "styled-components";
 import Header from "./Header";
 import Cursor from "./Cursor";
 
-import sampleDocuments from "../../sampleDocuments";
-
 const Page = styled.div`
   width: 100%;
   background: #fff;
@@ -40,7 +38,9 @@ const Content = styled.div`
 `;
 
 // TODO: polish cursor tracking
-export default function Document() {
+export default function Document(props) {
+  const { users, setUsers } = props;
+
   const [document, setDocument] = useState();
   const [value, setValue] = useState();
   const dragging = useRef(false);

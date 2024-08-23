@@ -1,0 +1,37 @@
+sample jsons for autho0 login
+
+email and password
+{
+    "nickname": "taeil2",
+    "name": "taeil2@gmail.com",
+    "picture": "https://s.gravatar.com/avatar/285d032ef88312c1e3f050e2c42ec33e?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fta.png",
+    "updated_at": "2024-08-22T22:43:44.405Z",
+    "email": "taeil2@gmail.com",
+    "email_verified": false,
+    "sub": "auth0|66c7bf20048b91de038567dc"
+}
+
+Google
+{
+    "given_name": "Taeil",
+    "family_name": "Kwak",
+    "nickname": "taeil2",
+    "name": "Taeil Kwak",
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocIKyT5T8KVBIyGl8oKfVzhfFk8x9SEbLIqrh0U2cZuRfA279k4U=s96-c",
+    "updated_at": "2024-08-22T22:45:54.536Z",
+    "email": "taeil2@gmail.com",
+    "email_verified": true,
+    "sub": "google-oauth2|107510396796505433378"
+}
+
+Facebook
+{
+    "given_name": "Taeil",
+    "family_name": "Kwak",
+    "nickname": "Taeil Kwak",
+    "name": "Taeil Kwak",
+    "picture": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10102962388336838&height=50&width=50&ext=1726958815&hash=Abaxh6UctS-NSB6tC-sW2zCm",
+    "updated_at": "2024-08-22T22:46:55.968Z",
+    "email_verified": true,
+    "sub": "facebook|10102962388336838"
+}

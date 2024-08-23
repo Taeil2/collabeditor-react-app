@@ -1,10 +1,10 @@
-import styled from 'styled-components'
-import { useState, useEffect, useContext, createContext } from 'react'
+import styled from "styled-components";
+import { useState, useEffect, useContext, createContext } from "react";
 
-import LoginButton from '@/components/LoginButton'
-import { useAuth0 } from '@auth0/auth0-react'
-import Header from '../index/Header'
-import LogoutButton from '@/components/LogoutButton'
+import LoginButton from "@/components/LoginButton";
+import { useAuth0 } from "@auth0/auth0-react";
+import Header from "../index/Header";
+import LogoutButton from "@/components/LogoutButton";
 
 const Loading = styled.div`
   display: flex;
@@ -12,11 +12,11 @@ const Loading = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-`
+`;
 
 export default function AuthenticationHandler({ Component, pageProps }) {
-  const [currentUser, setCurrentUser] = useState()
-  const { user, isAuthenticated, isLoading } = useAuth0()
+  const [currentUser, setCurrentUser] = useState();
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   // const UserContext = useContext()
 
@@ -33,7 +33,7 @@ export default function AuthenticationHandler({ Component, pageProps }) {
     <>
       <Component {...pageProps} />
     </>
-  )
+  );
 
   if (isLoading) {
     return (
@@ -42,7 +42,7 @@ export default function AuthenticationHandler({ Component, pageProps }) {
         <LoginButton />
         <LogoutButton />
       </div>
-    )
+    );
   } else if (isAuthenticated) {
     return (
       <UserContext.Provider>
@@ -51,13 +51,13 @@ export default function AuthenticationHandler({ Component, pageProps }) {
         <h2>{user.name}</h2>
         <p>{user.email}</p>
       </UserContext.Provider>
-    )
+    );
   } else {
     return (
       <div>
         <LoginButton />
         <LogoutButton />
       </div>
-    )
+    );
   }
 }

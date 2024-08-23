@@ -20,15 +20,16 @@ const Form = styled.form`
 `;
 
 export default function NameModal(props) {
-  const { setChangeNameOpen } = props;
+  const { setChangeNameOpen, currentUser } = props;
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(currentUser.name);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    // TODO: update user's name
-    setChangeNameOpen(false);
+    if (name.match(/^ *$/) === null) {
+      setChangeNameOpen(false);
+    }
   };
 
   return (

@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
-import GlobalStyles from "./styles/global";
-// import AuthenticationHandler from "./_app/AuthenticationHandler";
+import { useAuth0 } from "@auth0/auth0-react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 
+import GlobalStyles from "./styles/global";
 import Home from "./pages/index";
 import Document from "./pages/document";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
+
+import { getUsers } from "./server/users";
 
 const Loading = styled.div`
   display: flex;
@@ -17,67 +20,57 @@ const Loading = styled.div`
   justify-content: center;
 `;
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "document/:id",
-    element: <Document />,
-  },
-]);
-
 export default function App() {
-  let [location, setLocation] = useState("http://www.localhost:3000/");
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  const [users, setUsers] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setLocation(window.location.origin);
-    }
-
-    // fetch users
-    // logged in user is not in users, create a new user
+    fetchUsers();
   }, []);
 
-  {
-    /* <img src={user.picture} alt={user.name} />
-       <h2>{user.name}</h2>
-       <p>{user.email}</p> */
-  }
-
-  // console.log("isLoading", isLoading);
-  // console.log("isAuthenticated", isAuthenticated);
-  // console.log("user", user);
+  const fetchUsers = async () => {
+    const fetchedUsers = await getUsers();
+    setUsers(fetchedUsers);
+    console.log(fetchedUsers);
+  };
 
   return (
-    <Auth0Provider
-      domain="dev-bn8s278zc54ocjvv.us.auth0.com"
-      clientId="kl6LAPOx7pSTazNZg07jQcfxiXJIdDED"
-      authorizationParams={{
-        redirect_uri: location,
-      }}
-    >
-      <GlobalStyles>
-        <main>
-          <RouterProvider router={router}></RouterProvider>
-          {/* {isLoading && (
-            <div>
-              <Loading>Loading</Loading>
-              <LoginButton />
-              <LogoutButton />
-            </div>
-          )} */}
-          {/* {isAuthenticated && <RouterProvider router={router}></RouterProvider>} */}
-          {/* {!isLoading && !isAuthenticated && (
-            <div>
-              <LoginButton />
-              <LogoutButton />
-            </div>
-          )} */}
-        </main>
-      </GlobalStyles>
-    </Auth0Provider>
+    <GlobalStyles>
+      <main>
+        {/* <RouterProvider router={router}></RouterProvider> */}
+        {isAuthenticated && (
+          <BrowserRouter basename="/">
+            <Routes>
+              <Route
+                path="/"
+                element={<Home users={users} setUsers={setUsers} />}
+              />
+              <Route
+                path="document/:id"
+                element={<Document users={users} setUsers={setUsers} />}
+              />
+            </Routes>
+          </BrowserRouter>
+        )}
+        {!isLoading && !isAuthenticated && (
+          <div>
+            <LoginButton />
+          </div>
+        )}
+        {isLoading && !isAuthenticated && (
+          <div>
+            <Loading>Loading</Loading>
+            <LogoutButton />
+          </div>
+        )}
+        {isLoading && isAuthenticated && (
+          <div>
+            <Loading>Loading</Loading>
+            <LogoutButton />
+          </div>
+        )}
+      </main>
+    </GlobalStyles>
   );
 }

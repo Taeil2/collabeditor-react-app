@@ -8,6 +8,15 @@ import Button from "../../components/Button";
 
 import { FaRegTrashAlt } from "react-icons/fa";
 
+import { deleteDocument } from "../../server/documents";
+
+const Container = styled.div`
+  width: 100%;
+  & > a {
+    display: flex !important;
+  }
+`;
+
 const Card = styled.div`
   display: grid;
   grid-template-columns: auto 161px 111px;
@@ -19,6 +28,7 @@ const Card = styled.div`
   background: #fff;
   margin-bottom: 30px;
   cursor: pointer;
+  width: 100%;
   > div:first-of-type {
     p {
       max-height: 100px;
@@ -44,6 +54,7 @@ const Card = styled.div`
     }
     button {
       align-self: end;
+      margin-top: 20px;
     }
   }
 `;
@@ -67,39 +78,41 @@ export default function DocumentCard(props) {
   );
 
   // TODO: truncate document content with ellipsis
-  console.log(document);
   return (
-    <Link to={`/document/${document?._id}`}>
-      <Card>
-        <div>
-          <h3>{document?.name}</h3>
-          <p>{document?.content}</p>
-        </div>
-        <div>
-          <h6>collabeditors</h6>
-          <Collabeditor collabeditor={document?.owner} index={0} />
-          {document?.collabeditors.map((collabeditor, i) => (
-            <Collabeditor
-              collabeditor={collabeditor}
-              index={i + 1}
-              key={`collabeditor-${i + 1}`}
-            />
-          ))}
-        </div>
-        <div>
+    <Container>
+      <Link to={`/document/${document?._id}`}>
+        <Card>
           <div>
-            <h6>updated</h6>
-            <p>{dateString}</p>
+            <h3>{document?.name ? document.name : "Unnamed Document"}</h3>
+            <p>{document?.content}</p>
           </div>
-          <Button
-            icon={<FaRegTrashAlt />}
-            onClick={() => {
-              console.log("clicked");
-            }}
-            color="red"
-          />
-        </div>
-      </Card>
-    </Link>
+          <div>
+            <h6>collabeditors</h6>
+            <Collabeditor collabeditor={document?.owner} index={0} />
+            {document?.collabeditors.map((collabeditor, i) => (
+              <Collabeditor
+                collabeditor={collabeditor}
+                index={i + 1}
+                key={`collabeditor-${i + 1}`}
+              />
+            ))}
+          </div>
+          <div>
+            <div>
+              <h6>updated</h6>
+              <p>{dateString}</p>
+            </div>
+            <Button
+              icon={<FaRegTrashAlt />}
+              onClick={(e) => {
+                e.preventDefault();
+                deleteDocument(document?._id);
+              }}
+              color="red"
+            />
+          </div>
+        </Card>
+      </Link>
+    </Container>
   );
 }
