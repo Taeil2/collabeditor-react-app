@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { colors, grays } from "../styles/styles";
 
@@ -64,16 +65,20 @@ const OwnerLabel = styled.div`
 `;
 
 export default function Collabeditor(props) {
-  const { collabeditor, index, showTag = true } = props;
+  const { collabeditor, index, showTag = true, users } = props;
+  let matchedUser = useRef();
+
+  useEffect(() => {
+    matchedUser = users?.filter((user) => user._id === collabeditor)[0];
+    console.log(users, collabeditor, matchedUser);
+  }, []);
 
   return (
     <Container>
-      <Circle $index={index}>
-        {collabeditor?.name && collabeditor?.name[0]?.toLowerCase()}
-      </Circle>
+      <Circle $index={index}>{matchedUser?.name?.toLowerCase()}</Circle>
       {showTag && (
         <Tag className="tag" $index={index}>
-          {collabeditor?.name?.toLowerCase()}
+          {matchedUser?.name?.toLowerCase()}
         </Tag>
       )}
       {index === 0 && <OwnerLabel>owner</OwnerLabel>}

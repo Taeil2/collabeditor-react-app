@@ -60,7 +60,7 @@ const Card = styled.div`
 `;
 
 export default function DocumentCard(props) {
-  const { document, documents, setDocuments } = props;
+  const { document, documents, setDocuments, users } = props;
 
   const date = new Date(document.updated);
   const hours = date.getHours() % 12;
@@ -88,10 +88,15 @@ export default function DocumentCard(props) {
           </div>
           <div>
             <h6>collabeditors</h6>
-            <Collabeditor collabeditor={document?.owner} index={0} />
+            <Collabeditor
+              collabeditor={document?.owner}
+              users={users}
+              index={0}
+            />
             {document?.collabeditors.map((collabeditor, i) => (
               <Collabeditor
                 collabeditor={collabeditor}
+                users={users}
                 index={i + 1}
                 key={`collabeditor-${i + 1}`}
               />

@@ -18,9 +18,11 @@ export default function Home(props) {
 
   const { user } = useAuth0();
 
-  useEffect(() => {
-    console.log(currentUser);
-  }, [currentUser]);
+  // useEffect(() => {
+  //   console.log("auth0 user", user);
+  //   console.log("users", users);
+  //   console.log("currentUser", currentUser);
+  // }, [user, users, currentUser]);
 
   useEffect(() => {
     if (!currentUser && users) {
@@ -38,10 +40,18 @@ export default function Home(props) {
   const createNewUser = async () => {
     if (user.given_name) {
       const newUser = await addUser(user.email, user.given_name);
-      setCurrentUser(newUser);
+      setCurrentUser({
+        _id: newUser.insertedId,
+        email: user.email,
+        name: user.given_name,
+      });
     } else {
       const newUser = await addUser(user.email, "");
-      setCurrentUser(newUser);
+      setCurrentUser({
+        _id: newUser.insertedId,
+        email: user.email,
+        name: "",
+      });
     }
   };
 
@@ -53,8 +63,6 @@ export default function Home(props) {
     }
   }, [currentUser]);
 
-  console.log(documents);
-
   return (
     <>
       <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
@@ -64,6 +72,7 @@ export default function Home(props) {
           key={`document-${i}`}
           documents={documents}
           setDocuments={setDocuments}
+          users={users}
         />
       ))}
     </>

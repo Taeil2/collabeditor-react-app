@@ -37,38 +37,56 @@ export default function App() {
   return (
     <GlobalStyles>
       <main>
-        {/* <RouterProvider router={router}></RouterProvider> */}
-        {isAuthenticated && (
-          <BrowserRouter basename="/">
-            <Routes>
-              <Route
-                path="/"
-                element={<Home users={users} setUsers={setUsers} />}
-              />
-              <Route
-                path="document/:id"
-                element={<Document users={users} setUsers={setUsers} />}
-              />
-            </Routes>
-          </BrowserRouter>
-        )}
-        {!isLoading && !isAuthenticated && (
-          <div>
-            <LoginButton />
-          </div>
-        )}
-        {isLoading && !isAuthenticated && (
-          <div>
-            <Loading>Loading</Loading>
-            <LoginButton />
-          </div>
-        )}
-        {isLoading && isAuthenticated && (
-          <div>
-            <Loading>Loading</Loading>
-            <LogoutButton />
-          </div>
-        )}
+        {/* if disabling auth0 */}
+        {/* <BrowserRouter basename="/">
+          <Routes>
+            <Route
+              path="/"
+              element={<Home users={users} setUsers={setUsers} />}
+            />
+            <Route
+              path="document/:id"
+              element={<Document users={users} setUsers={setUsers} />}
+            />
+          </Routes>
+        </BrowserRouter> */}
+        <>
+          {isAuthenticated && (
+            <BrowserRouter basename="/">
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Home users={users} setUsers={setUsers} />}
+                />
+                <Route
+                  path="document/:id"
+                  element={<Document users={users} setUsers={setUsers} />}
+                />
+              </Routes>
+            </BrowserRouter>
+          )}
+          {!isLoading && !isAuthenticated && (
+            <div>
+              <p>not loading, not authenticated</p>
+              <LoginButton />
+              <LogoutButton />
+            </div>
+          )}
+          {isLoading && !isAuthenticated && (
+            <div>
+              <Loading>loading, not authenticated</Loading>
+              <LoginButton />
+              <LogoutButton />
+            </div>
+          )}
+          {isLoading && isAuthenticated && (
+            <div>
+              <Loading>loading, authenticated</Loading>
+              <LoginButton />
+              <LogoutButton />
+            </div>
+          )}
+        </>
       </main>
     </GlobalStyles>
   );

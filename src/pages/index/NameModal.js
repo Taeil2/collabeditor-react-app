@@ -34,7 +34,7 @@ export default function NameModal(props) {
       await updateUser(name, currentUser._id);
       const userUpdate = { ...currentUser };
       userUpdate.name = name;
-      setCurrentUser({ name: name, ...currentUser });
+      setCurrentUser(userUpdate);
     }
   };
 

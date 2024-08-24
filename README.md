@@ -1,11 +1,8 @@
 ## To Do
 
-- authenticated login
+- integrate auth.io
 - save user if it does not exist
 - set user if it does
-- modals
-  - what is your name
-  - Collabeditors
 - socket.io integration
 - cursor
 - highlighting
