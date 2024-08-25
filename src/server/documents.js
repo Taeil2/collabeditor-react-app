@@ -21,6 +21,14 @@ const addDocument = async (userId) => {
   return response;
 };
 
+const getDocument = async (documentId) => {
+  let result = await fetch(`${serverUrl}/documents/${documentId}`).then(
+    (resp) => resp.json()
+  );
+
+  return result;
+};
+
 const updateDocument = async (updates) => {
   //   let response = await fetch(`${serverUrl}/document/${id}`, {
   //     method: "PATCH",
@@ -38,4 +46,10 @@ const deleteDocument = async (id) => {
   });
 };
 
-export { getDocuments, addDocument, updateDocument, deleteDocument };
+export {
+  getDocuments,
+  addDocument,
+  getDocument,
+  updateDocument,
+  deleteDocument,
+};

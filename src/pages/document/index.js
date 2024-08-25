@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Header from "./Header";
 import Cursor from "./Cursor";
 
-import { updateDocument } from "../../server/documents";
+import { updateDocument, getDocument } from "../../server/documents";
 
 const Page = styled.div`
   width: 100%;
@@ -56,13 +56,18 @@ export default function Document(props) {
   const params = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:5050/documents/${params.id}`)
-      .then((resp) => resp.json())
-      .then((json) => {
-        setDocument(json);
-        setValue(json.content);
-      });
+    console.log("document", document);
+  }, [document]);
+
+  useEffect(() => {
+    fetchDocument(params.id);
   }, []);
+
+  const fetchDocument = async (id) => {
+    const fetchedDocument = await getDocument(id);
+    setDocument(fetchedDocument);
+    setValue(fetchedDocument.content);
+  };
 
   // const fetchUsers = async () => {
   //   const fetchedUsers = await getUsers();
@@ -229,7 +234,7 @@ export default function Document(props) {
 
   return (
     <>
-      <Header document={document} />
+      <Header document={document} users={users} />
       <Page>
         <Content>
           <textarea

@@ -37,9 +37,9 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
-  const { document } = props;
+  const { document, users } = props;
 
+  const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
   const [documentName, setDocumentName] = useState(document?.name);
 
   const changeTitle = () => {
@@ -62,12 +62,14 @@ export default function Header(props) {
       <div>
         <Collabeditor
           collabeditor={document?.owner}
+          users={users}
           index={0}
           key={`collabeditor-0`}
         />
         {document?.collabeditors?.map((collabeditor, i) => (
           <Collabeditor
             collabeditor={collabeditor}
+            users={users}
             index={i + 1}
             key={`collabeditor-0${i + 1}`}
           />

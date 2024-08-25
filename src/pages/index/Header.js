@@ -50,6 +50,7 @@ export default function Header(props) {
           onClick={async () => {
             const result = await addDocument(currentUser._id);
 
+            console.log(result.insertedId);
             window.location.href = `/document/${result.insertedId}`;
           }}
         />
