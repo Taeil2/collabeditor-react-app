@@ -95,7 +95,7 @@ export default function DocumentCard(props) {
             />
             {document?.collabeditors.map((collabeditor, i) => (
               <Collabeditor
-                collabeditor={collabeditor}
+                collabeditor={collabeditor.id}
                 users={users}
                 index={i + 1}
                 key={`collabeditor-${i + 1}`}

@@ -19,6 +19,7 @@ const CollabeditorRow = styled.div`
   grid-template-columns: 100px 100px 50px;
   column-gap: 10px;
   margin-bottom: 10px;
+  align-items: center;
   &.permissions-label {
     margin-bottom: 5px;
   }
@@ -51,17 +52,13 @@ const Form = styled.form`
 `;
 
 export default function CollabeditorsModal(props) {
-  const { document, setDocument, setShowModal, users, collabeditors } = props;
+  const { document, setDocument, setShowModal, users } = props;
 
   const [name, setName] = useState("");
   const [selectedCollabeditor, setSelectedCollabeditor] = useState({});
-  const [addPermissions, setAddPermissions] = useState();
+  const [addPermissions, setAddPermissions] = useState("all");
   // remove this and use selectedCollabeditor instead
   const [nameSelected, setNameSelected] = useState(false);
-
-  const addCollabeditor = (id, permissions) => {
-    updateDocument([...collabeditors, { id, permissions }]);
-  };
 
   const updatePermissions = (e, collabeditor) => {
     console.log(e, collabeditor);
@@ -77,20 +74,24 @@ export default function CollabeditorsModal(props) {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    updateDocument({
-      collabeditors: [
-        ...collabeditors,
-        { id: selectedCollabeditor._id, permissions: addPermissions },
-      ],
-    });
+    console.log(addPermissions);
+
+    updateDocument(
+      {
+        collabeditors: [
+          ...document.collabeditors,
+          { id: selectedCollabeditor._id, permissions: addPermissions },
+        ],
+      },
+      document._id
+    );
     setDocument({
       ...document,
       collabeditors: [
-        ...collabeditors,
+        ...document.collabeditors,
         { id: selectedCollabeditor._id, permissions: addPermissions },
       ],
     });
-    // updateDocument();
   };
 
   // collabeditors: [id, permission]
@@ -137,7 +138,9 @@ export default function CollabeditorsModal(props) {
                 key={`collabeditor-0${i + 1}`}
                 showTag={false}
               /> */}
-              <div className="name">{collabeditor?.name}</div>
+              <div className="name">
+                {users?.filter((user) => user._id === collabeditor.id)[0].name}
+              </div>
               <select
                 onChange={(e) => {
                   updatePermissions(e, collabeditor);
@@ -176,10 +179,13 @@ export default function CollabeditorsModal(props) {
           <select
             id="permissions"
             onChange={(e) => {
+              console.log(e.target.value);
               setAddPermissions(e.target.value);
             }}
           >
-            <option value="all">all</option>
+            <option value="all" selected>
+              all
+            </option>
             <option value="edit">edit</option>
             <option value="view">view</option>
           </select>

@@ -76,10 +76,10 @@ export default function Header(props) {
         />
         {document?.collabeditors?.map((collabeditor, i) => (
           <Collabeditor
-            collabeditor={collabeditor}
+            collabeditor={collabeditor?.id}
             users={users}
             index={i + 1}
-            key={`collabeditor-0${i + 1}`}
+            key={`collabeditor-${i + 1}`}
           />
         ))}
         <Button
@@ -95,7 +95,6 @@ export default function Header(props) {
             setDocument={setDocument}
             setShowModal={setCollabeditorsOpen}
             users={users}
-            collabeditors={document?.collabeditors}
           />
         )}
       </div>
