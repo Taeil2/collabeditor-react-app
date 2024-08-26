@@ -10,6 +10,8 @@ import CollabeditorsModal from "./CollabeditorsModal";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoPeople } from "react-icons/io5";
 
+import { updateDocument } from "../../server/documents";
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -37,14 +39,20 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const { document, users } = props;
+  const { document, setDocument, users } = props;
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
   const [documentName, setDocumentName] = useState(document?.name);
 
-  const changeTitle = () => {
-    setDocumentName();
+  const changeTitle = (e) => {
+    setDocumentName(e.target.value);
+    // send to socket.io on every keypress
+    // update from socket.io on every keypress
   };
+
+  // after timeout, update document, set document
+  // updateDocument();
+  // setDocument();
 
   return (
     <Container>
@@ -84,7 +92,10 @@ export default function Header(props) {
         {collabeditorsOpen && (
           <CollabeditorsModal
             document={document}
+            setDocument={setDocument}
             setShowModal={setCollabeditorsOpen}
+            users={users}
+            collabeditors={document?.collabeditors}
           />
         )}
       </div>

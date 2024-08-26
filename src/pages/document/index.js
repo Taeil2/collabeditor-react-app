@@ -234,7 +234,7 @@ export default function Document(props) {
 
   return (
     <>
-      <Header document={document} users={users} />
+      <Header document={document} setDocument={setDocument} users={users} />
       <Page>
         <Content>
           <textarea

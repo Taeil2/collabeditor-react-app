@@ -29,15 +29,16 @@ const getDocument = async (documentId) => {
   return result;
 };
 
-const updateDocument = async (updates) => {
-  //   let response = await fetch(`${serverUrl}/document/${id}`, {
-  //     method: "PATCH",
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(updates),
-  //   }).then((resp) => resp.json());
-  //   return response;
+const updateDocument = async (update, id) => {
+  let response = await fetch(`${serverUrl}/documents/${id}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(update),
+  }).then((resp) => resp.json());
+
+  return response;
 };
 
 const deleteDocument = async (id) => {

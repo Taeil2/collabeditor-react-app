@@ -28,6 +28,19 @@ const StyledButton = styled.button`
       }
     }};
   }
+  &:disabled {
+    background: ${(props) => {
+      if (props.$color === "red") {
+        return colors.lightRed;
+      } else if (props.$color === "gray") {
+        return colors.lightGray;
+      } else if (props.$color === "transparent") {
+        return "transparent";
+      } else {
+        return colors.lightCyan;
+      }
+    }};
+  }
   height: 35px;
   padding: 0 10px;
   border-radius: 5px;
