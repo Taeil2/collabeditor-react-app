@@ -1,12 +1,24 @@
 ## To Do
 
-- integrate auth.io
-- save user if it does not exist
-- set user if it does
+- collabeditors
+  - update permissions
+  - delete collabeditor
+  - check add collabeditor (with permission)
+- collabeditor permissions
+  - all (do everything)
+  - edit (remove delete button)
+  - view (make document read only)
+- collabeditors modal based on permissions
+  - all (do everything)
+  - edit (allow edit and view, no delete)
+  - view (read only, no add)
 - socket.io integration
+- read only view
+
+optional
+
 - highlighting
 - publish
-
 - elegant loading
 
 # Getting Started with Create React App
