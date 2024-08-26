@@ -7,6 +7,9 @@ import Cursor from "./Cursor";
 
 import { updateDocument, getDocument } from "../../server/documents";
 
+import { io } from "socket.io-client";
+import serverUrl from "../../server/serverUrl";
+
 const Page = styled.div`
   width: 100%;
   background: #fff;
@@ -53,6 +56,9 @@ export default function Document(props) {
   const ghostDivRef = useRef(null);
   const [ghostDivContent, setGhostDivContent] = useState();
 
+  const socket = io(serverUrl);
+  const [isConnected, setIsConnected] = useState(socket.connected);
+
   const params = useParams();
 
   useEffect(() => {
@@ -61,13 +67,50 @@ export default function Document(props) {
 
   useEffect(() => {
     fetchDocument(params.id);
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("foo", onFooEvent);
   }, []);
+
+  function onConnect() {
+    setIsConnected(true);
+    console.log("connected");
+  }
+
+  function onDisconnect() {
+    setIsConnected(false);
+    console.log("disconnected");
+  }
+
+  function onFooEvent(value) {
+    // setFooEvents((previous) => [...previous, value]);
+  }
 
   const fetchDocument = async (id) => {
     const fetchedDocument = await getDocument(id);
     setDocument(fetchedDocument);
     setValue(fetchedDocument.content);
+
+    // join socket.io for the room
+    console.log(socket);
+    console.log(socket.connected);
+    // socket.join(fetchedDocument._id);
+    // socket.emit("connect", fetchedDocument);
   };
+
+  // const connectToSocketIo = (document) => {
+  //   // socket.emit("chat message", input.value);
+
+  //   // broadcast to all connected clients in the room
+  //   io.to("some room").emit("hello", "world");
+
+  //   // broadcast to all connected clients except those in the room
+  //   io.except("some room").emit("hello", "world");
+
+  //   // leave the room
+  //   socket.leave("some room");
+  // };
 
   // const fetchUsers = async () => {
   //   const fetchedUsers = await getUsers();

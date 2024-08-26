@@ -61,37 +61,70 @@ export default function CollabeditorsModal(props) {
   const [nameSelected, setNameSelected] = useState(false);
 
   const updatePermissions = (e, collabeditor) => {
-    console.log(e, collabeditor);
-    // update permissions of user updated
+    const updatedCollabeditors = document.collabeditors.map((c) => {
+      if (c.id !== collabeditor.id) {
+        return c;
+      } else {
+        return {
+          id: c.id,
+          permissions: e.target.value,
+        };
+      }
+    });
+
+    console.log(updatedCollabeditors);
+
+    updateDocument(
+      {
+        collabeditors: updatedCollabeditors,
+      },
+      document._id
+    );
+    setDocument({
+      ...document,
+      collabeditors: updatedCollabeditors,
+    });
   };
 
-  const removeCollabeditor = (id) => {
-    updateDocument();
-    // remove id
+  const removeCollabeditor = (e, collabeditor) => {
+    const updatedCollabeditors = document.collabeditors.filter(
+      (c) => c.id !== collabeditor.id
+    );
+
+    updateDocument(
+      {
+        collabeditors: updatedCollabeditors,
+      },
+      document._id
+    );
+    setDocument({
+      ...document,
+      collabeditors: updatedCollabeditors,
+    });
   };
 
   // add collabeditor on form submit
   const onSubmit = (e) => {
     e.preventDefault();
 
-    console.log(addPermissions);
+    const updatedCollabeditors = [
+      ...document.collabeditors,
+      { id: selectedCollabeditor._id, permissions: addPermissions },
+    ];
 
     updateDocument(
       {
-        collabeditors: [
-          ...document.collabeditors,
-          { id: selectedCollabeditor._id, permissions: addPermissions },
-        ],
+        collabeditors: updatedCollabeditors,
       },
       document._id
     );
     setDocument({
       ...document,
-      collabeditors: [
-        ...document.collabeditors,
-        { id: selectedCollabeditor._id, permissions: addPermissions },
-      ],
+      collabeditors: updatedCollabeditors,
     });
+
+    setName("");
+    setAddPermissions("all");
   };
 
   // collabeditors: [id, permission]
@@ -146,14 +179,29 @@ export default function CollabeditorsModal(props) {
                   updatePermissions(e, collabeditor);
                 }}
               >
-                <option value="all">all</option>
-                <option value="edit">edit</option>
-                <option value="view">view</option>
+                <option
+                  value="all"
+                  selected={collabeditor.permissions === "all" ? true : false}
+                >
+                  all
+                </option>
+                <option
+                  value="edit"
+                  selected={collabeditor.permissions === "edit" ? true : false}
+                >
+                  edit
+                </option>
+                <option
+                  value="view"
+                  selected={collabeditor.permissions === "view" ? true : false}
+                >
+                  view
+                </option>
               </select>
               <Button
                 icon={<FaRegTrashAlt />}
-                onClick={() => {
-                  console.log("clicked");
+                onClick={(e) => {
+                  removeCollabeditor(e, collabeditor);
                 }}
                 color="red"
               />
@@ -179,15 +227,27 @@ export default function CollabeditorsModal(props) {
           <select
             id="permissions"
             onChange={(e) => {
-              console.log(e.target.value);
               setAddPermissions(e.target.value);
             }}
           >
-            <option value="all" selected>
+            <option
+              value="all"
+              selected={addPermissions === "all" ? true : false}
+            >
               all
             </option>
-            <option value="edit">edit</option>
-            <option value="view">view</option>
+            <option
+              value="edit"
+              selected={addPermissions === "edit" ? true : false}
+            >
+              edit
+            </option>
+            <option
+              value="view"
+              selected={addPermissions === "view" ? true : false}
+            >
+              view
+            </option>
           </select>
           <Button
             type="submit"

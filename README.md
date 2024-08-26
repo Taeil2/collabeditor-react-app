@@ -1,9 +1,5 @@
 ## To Do
 
-- collabeditors
-  - update permissions
-  - delete collabeditor
-  - check add collabeditor (with permission)
 - collabeditor permissions
   - all (do everything)
   - edit (remove delete button)
