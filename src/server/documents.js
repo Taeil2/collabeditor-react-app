@@ -4,6 +4,7 @@ const getDocuments = async (userId) => {
   let results = await fetch(`${serverUrl}/documents?id=${userId}`).then(
     (resp) => resp.json()
   );
+
   return results;
 };
 
