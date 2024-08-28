@@ -35,6 +35,7 @@ const Card = styled.div`
       overflow: hidden;
       --max-lines: 5
       color: ${grays.gray6};
+      white-space: pre-line;
     }
   }
   > div:not(:first-of-type) {
@@ -85,6 +86,7 @@ export default function DocumentCard(props) {
           <div>
             <h3>{document?.name ? document.name : "Unnamed Document"}</h3>
             <p>{document?.content}</p>
+            {/* <div>{document?.content}</div> */}
           </div>
           <div>
             <h6>collabeditors</h6>

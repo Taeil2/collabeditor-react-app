@@ -39,10 +39,17 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const { document, users, currentUsers, nameRef, socket } = props;
+  const {
+    document,
+    users,
+    currentUsers,
+    collabeditors,
+    setCollabeditors,
+    nameRef,
+    socket,
+  } = props;
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
-  // const [documentName, setDocumentName] = useState(document?.name);
 
   const changeName = (e) => {
     socket.emit("name", {
@@ -63,6 +70,9 @@ export default function Header(props) {
           onChange={changeName}
           ref={nameRef}
         />
+        {/* <div className="ghostName" ref={ghostNameRef}>
+          {ghostNameContent}
+        </div> */}
       </div>
       <div>
         {Object.keys(currentUsers).map((key, i) => {
@@ -92,9 +102,10 @@ export default function Header(props) {
         {collabeditorsOpen && (
           <CollabeditorsModal
             document={document}
-            // setDocument={setDocument}
+            collabeditors={collabeditors}
             setShowModal={setCollabeditorsOpen}
             users={users}
+            socket={socket}
           />
         )}
       </div>

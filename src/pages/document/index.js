@@ -33,7 +33,7 @@ const Content = styled.div`
     font-size: 14px;
     caret-color: transparent;
   }
-  .ghostDiv {
+  .ghostBody {
     width: 100%;
     height: 100px;
     border: 1px solid #eee;
@@ -53,24 +53,21 @@ export default function Document(props) {
   const nameRef = useRef();
   const bodyRef = useRef();
   const [currentUsers, setCurrentUsers] = useState({});
-  const [value, setValue] = useState("");
+  const [collabeditors, setCollabeditors] = useState([]);
 
-  // cursor tracking
-  const [cursorLocation, setCursorLocation] = useState([0, 0]);
-  const [cursorCharLocation, setCursorCharLocation] = useState([
+  // track own cursor
+  const cursorLocation = useRef("header");
+  const cursorCharLocation = useRef([0, 0]);
+  const cursorPixelLocation = useRef([
     [1, 1],
     [1, 1],
   ]);
   const dragging = useRef(false);
-  const selection = useRef([0, 0]);
+  const ghostBodyRef = useRef(null);
+  const ghostBodyContent = useRef("");
 
-  const characterPosition = useRef([0, 0]); // character position
-  const [selectionPosition, setSelectionPosition] = useState([
-    [1, 0],
-    [1, 0],
-  ]); // cursor position (by pixel, x and y)
-  const ghostDivRef = useRef(null);
-  const [ghostDivContent, setGhostDivContent] = useState();
+  // everyone's cursors
+  const cursorLocations = useRef({});
 
   const socket = io(serverUrl);
 
@@ -85,8 +82,6 @@ export default function Document(props) {
 
   // on disconnect, leave the socket.io room
   useEffect(() => {
-    // socket.on("connect", onConnect); // ignoring on connect function (left as a note)
-
     return () => {
       if (document.current) {
         socket.emit("leave", {
@@ -95,16 +90,6 @@ export default function Document(props) {
         });
       }
     };
-    // socket.on("disconnect", () => {
-    //   console.log("disconnecting");
-    //   if (document.current) {
-    //     console.log("leaving");
-    //     socket.emit("leave", {
-    //       document: document,
-    //       user: currentUser,
-    //     });
-    //   }
-    // });
   }, []);
 
   const fetchDocument = async (id) => {
@@ -126,19 +111,18 @@ export default function Document(props) {
       nameRef.current.value = updatedDocument?.name;
     }
     setCurrentUsers(updatedDocument.currentUsers);
+    setCollabeditors(updatedDocument.collabeditors);
   });
 
   // when someone leaves, update the current users
   socket.on("leave", (updatedDocument) => {
     document.current = updatedDocument;
     setCurrentUsers(updatedDocument.currentUsers);
-    console.log("updating users", updatedDocument.currentUsers);
   });
 
   socket.on("body", (updatedDocument) => {
     document.current = updatedDocument;
     bodyRef.current.value = updatedDocument.content;
-    // update other things as well.
   });
 
   socket.on("name", (updatedDocument) => {
@@ -146,13 +130,10 @@ export default function Document(props) {
     nameRef.current.value = updatedDocument.name;
   });
 
-  // useEffect(() => {
-  //   setGhostDiv();
-  // }, [value]);
-
-  // useEffect(() => {
-  //   setCursor();
-  // }, [ghostDivContent]);
+  socket.on("collabeditors", (updatedDocument) => {
+    document.current = updatedDocument;
+    setCollabeditors(updatedDocument.collabeditors);
+  });
 
   const textareaOnChange = (e) => {
     socket.emit("body", {
@@ -160,21 +141,36 @@ export default function Document(props) {
       // user: currentUser,
       body: e.target.value,
     });
-    // selection.current = [e.target.selectionStart, e.target.selectionEnd];
+
+    cursorLocation.current = "body";
+    cursorCharLocation.current = [
+      e.target.selectionStart,
+      e.target.selectionEnd,
+    ];
+    setGhostBody();
   };
 
   // on mouse or key down
   const textareaMouseKeyDown = (e) => {
     dragging.current = true;
-    selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    setGhostDiv();
+
+    cursorLocation.current = "body";
+    cursorCharLocation.current = [
+      e.target.selectionStart,
+      e.target.selectionEnd,
+    ];
+    setGhostBody();
     textareaDraggingScrolling(e);
   };
 
   // dragging or scrolling
   const textareaDraggingScrolling = (e) => {
-    selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    setGhostDiv();
+    cursorLocation.current = "body";
+    cursorCharLocation.current = [
+      e.target.selectionStart,
+      e.target.selectionEnd,
+    ];
+    setGhostBody();
     setTimeout(() => {
       if (dragging.current) {
         textareaDraggingScrolling(e);
@@ -185,116 +181,123 @@ export default function Document(props) {
   // on mouse or key up
   const textareaMouseKeyUp = (e) => {
     dragging.current = false;
-    selection.current = [e.target.selectionStart, e.target.selectionEnd];
-    setGhostDiv();
+    cursorLocation.current = "body";
+    cursorCharLocation.current = [
+      e.target.selectionStart,
+      e.target.selectionEnd,
+    ];
+    setGhostBody();
   };
 
-  const setGhostDiv = () => {
+  const setGhostBody = () => {
+    const content = document.current.content;
     if (
       // cursor is at 0
-      selection.current[0] === 0 &&
-      selection.current[0] === selection.current[1]
+      cursorCharLocation.current[0] === 0 &&
+      cursorCharLocation.current[0] === cursorCharLocation.current[1]
     ) {
-      setGhostDivContent(
-        <>
-          <span></span>
-          {value}
-        </>
-      );
-    } else if (selection.current[0] === selection.current[1]) {
-      // cursor is at a single position
-      const preCharacter = value.substring(0, selection.current[0] - 1);
-      const character = value.substring(
-        selection.current[0] - 1,
-        selection.current[0]
-      );
-      const postCharacter = value.substring(selection.current[0], value.length);
+      ghostBodyRef.current.innerHTML = `<span></span>${content}</>`;
 
-      setGhostDivContent(
-        <>
-          {preCharacter}
-          <span style={{ background: "red" }}>{character}</span>
-          {postCharacter}
-        </>
-      );
+      setCursor();
     } else if (
-      selection.current[0] === 0 &&
-      selection.current[0] !== selection.current[1]
+      cursorCharLocation.current[0] === cursorCharLocation.current[1]
+    ) {
+      // cursor is at a single position
+      const preCharacter = content.substring(
+        0,
+        cursorCharLocation.current[0] - 1
+      );
+      const character = content.substring(
+        cursorCharLocation.current[0] - 1,
+        cursorCharLocation.current[0]
+      );
+      const postCharacter = content.substring(
+        cursorCharLocation.current[0],
+        content.length
+      );
+
+      ghostBodyRef.current.innerHTML = `${preCharacter}<span style="background:red;">${character}</span>${postCharacter}`;
+
+      setCursor();
+    } else if (
+      cursorCharLocation.current[0] === 0 &&
+      cursorCharLocation.current[0] !== cursorCharLocation.current[1]
     ) {
       // selection is highlighted from 0 to somewhere
-      const textSelection = value.substring(0, selection.current[1] - 1); // keyword selection is taken by the cursor selection
-      const lastCharacter = value.substring(
-        selection.current[1] - 1,
-        selection.current[1]
+      const textSelection = content.substring(
+        0,
+        cursorCharLocation.current[1] - 1
+      ); // keyword selection is taken by the cursor selection
+      const lastCharacter = content.substring(
+        cursorCharLocation.current[1] - 1,
+        cursorCharLocation.current[1]
       );
-      const postSelection = value.substring(selection.current[1], value.length);
+      const postSelection = content.substring(
+        cursorCharLocation.current[1],
+        content.length
+      );
 
-      setGhostDivContent(
-        <>
-          <span></span>
-          {textSelection}
-          <span style={{ background: "red" }}>{lastCharacter}</span>
-          {postSelection}
-        </>
-      );
+      ghostBodyRef.current.innerHTML = `<span></span>${textSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`;
+      setCursor();
     } else {
       // selection is highlighted from somewhere to somewhere
-      const preSelection = value.substring(0, selection.current[0] - 1);
-      const firstCharacter = value.substring(
-        selection.current[0] - 1,
-        selection.current[0]
+      const preSelection = content.substring(
+        0,
+        cursorCharLocation.current[0] - 1
       );
-      const midSelection = value.substring(
-        selection.current[0],
-        selection.current[1] - 1
+      const firstCharacter = content.substring(
+        cursorCharLocation.current[0] - 1,
+        cursorCharLocation.current[0]
       );
-      const lastCharacter = value.substring(
-        selection.current[1] - 1,
-        selection.current[1]
+      const midSelection = content.substring(
+        cursorCharLocation.current[0],
+        cursorCharLocation.current[1] - 1
       );
-      const postSelection = value.substring(selection.current[1], value.length);
+      const lastCharacter = content.substring(
+        cursorCharLocation.current[1] - 1,
+        cursorCharLocation.current[1]
+      );
+      const postSelection = content.substring(
+        cursorCharLocation.current[1],
+        content.length
+      );
 
-      setGhostDivContent(
-        <>
-          {preSelection}
-          <span style={{ background: "red" }}>{firstCharacter}</span>
-          {midSelection}
-          <span style={{ background: "red" }}>{lastCharacter}</span>
-          {postSelection}
-        </>
-      );
+      ghostBodyRef.current.innerHTML = `${preSelection}<span style="background:red;">${firstCharacter}</span>${midSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`;
+      setCursor();
     }
   };
 
   const setCursor = () => {
-    if (ghostDivRef.current.children.length) {
+    if (ghostBodyRef.current.children.length) {
       // set first cursor
       const position1 = [
-        ghostDivRef.current.children[0]?.offsetLeft +
-          ghostDivRef.current.children[0]?.offsetWidth,
-        ghostDivRef.current.children[0]?.offsetTop -
-          ghostDivRef.current.offsetTop,
+        ghostBodyRef.current.children[0]?.offsetLeft +
+          ghostBodyRef.current.children[0]?.offsetWidth,
+        ghostBodyRef.current.children[0]?.offsetTop -
+          ghostBodyRef.current.offsetTop,
       ];
       let position2;
-      if (ghostDivRef.current.children.length === 1) {
+      if (ghostBodyRef.current.children.length === 1) {
         // second is same as first
         position2 = [
-          ghostDivRef.current.children[0]?.offsetLeft +
-            ghostDivRef.current.children[0]?.offsetWidth,
-          ghostDivRef.current.children[0]?.offsetTop -
-            ghostDivRef.current.offsetTop,
+          ghostBodyRef.current.children[0]?.offsetLeft +
+            ghostBodyRef.current.children[0]?.offsetWidth,
+          ghostBodyRef.current.children[0]?.offsetTop -
+            ghostBodyRef.current.offsetTop,
         ];
       } else {
         // range is selected
         position2 = [
-          ghostDivRef.current.children[1]?.offsetLeft +
-            ghostDivRef.current.children[0]?.offsetWidth,
-          ghostDivRef.current.children[1]?.offsetTop -
-            ghostDivRef.current.offsetTop,
+          ghostBodyRef.current.children[1]?.offsetLeft +
+            ghostBodyRef.current.children[0]?.offsetWidth,
+          ghostBodyRef.current.children[1]?.offsetTop -
+            ghostBodyRef.current.offsetTop,
         ];
       }
 
-      setSelectionPosition([position1, position2]);
+      cursorPixelLocation.current = [position1, position2];
+      console.log(cursorPixelLocation.current[0]);
+      console.log(cursorPixelLocation.current[1]);
     }
   };
 
@@ -306,6 +309,8 @@ export default function Document(props) {
         users={users}
         nameRef={nameRef}
         socket={socket}
+        collabeditors={collabeditors}
+        setCollabeditors={setCollabeditors}
       />
       <Page>
         <Content>
@@ -336,12 +341,13 @@ export default function Document(props) {
             ref={bodyRef}
           />
           <Cursor
-            collabeditor={document?.owner}
+            collabeditor={document.current ? document.current.owner : ""}
             index={1}
-            selectionPosition={selectionPosition}
+            cursorPixelLocation={cursorPixelLocation}
+            users={users}
           />
-          <div className="ghostDiv" ref={ghostDivRef}>
-            {ghostDivContent}
+          <div className="ghostBody" ref={ghostBodyRef}>
+            {ghostBodyContent.current}
           </div>
         </Content>
       </Page>

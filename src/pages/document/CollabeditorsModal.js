@@ -52,7 +52,7 @@ const Form = styled.form`
 `;
 
 export default function CollabeditorsModal(props) {
-  const { document, setDocument, setShowModal, users } = props;
+  const { document, collabeditors, setShowModal, users, socket } = props;
 
   const [name, setName] = useState("");
   const [selectedCollabeditor, setSelectedCollabeditor] = useState({});
@@ -61,7 +61,7 @@ export default function CollabeditorsModal(props) {
   const [nameSelected, setNameSelected] = useState(false);
 
   const updatePermissions = (e, collabeditor) => {
-    const updatedCollabeditors = document.collabeditors.map((c) => {
+    const updatedCollabeditors = document.current.collabeditors.map((c) => {
       if (c.id !== collabeditor.id) {
         return c;
       } else {
@@ -72,31 +72,19 @@ export default function CollabeditorsModal(props) {
       }
     });
 
-    updateDocument(
-      {
-        collabeditors: updatedCollabeditors,
-      },
-      document._id
-    );
-    setDocument({
-      ...document,
+    socket.emit("collabeditors", {
+      document: document.current,
       collabeditors: updatedCollabeditors,
     });
   };
 
   const removeCollabeditor = (e, collabeditor) => {
-    const updatedCollabeditors = document.collabeditors.filter(
+    const updatedCollabeditors = document.current.collabeditors.filter(
       (c) => c.id !== collabeditor.id
     );
 
-    updateDocument(
-      {
-        collabeditors: updatedCollabeditors,
-      },
-      document._id
-    );
-    setDocument({
-      ...document,
+    socket.emit("collabeditors", {
+      document: document.current,
       collabeditors: updatedCollabeditors,
     });
   };
@@ -106,32 +94,18 @@ export default function CollabeditorsModal(props) {
     e.preventDefault();
 
     const updatedCollabeditors = [
-      ...document.collabeditors,
+      ...document.current.collabeditors,
       { id: selectedCollabeditor._id, permissions: addPermissions },
     ];
 
-    updateDocument(
-      {
-        collabeditors: updatedCollabeditors,
-      },
-      document._id
-    );
-    setDocument({
-      ...document,
+    socket.emit("collabeditors", {
+      document: document.current,
       collabeditors: updatedCollabeditors,
     });
 
     setName("");
     setAddPermissions("all");
   };
-
-  // collabeditors: [id, permission]
-
-  // const { value, setValue, options, setNameSelected } = props;
-  // const [autocompleteList, setAutocompleteList] = useState([]);
-  // const [selectedIndex, setSelectedIndex] = useState(-1);
-  // const [selectedOption, setSelectedOption] = useState();
-  // const optionsRef = useRef();
 
   return (
     <Modal
@@ -156,12 +130,15 @@ export default function CollabeditorsModal(props) {
               showTag={false}
             /> */}
             <div className="name">
-              {users?.filter((user) => user._id === document.owner)[0].name}
+              {
+                users?.filter((user) => user._id === document.current?.owner)[0]
+                  .name
+              }
             </div>
             <div>owner</div>
             <div></div>
           </CollabeditorRow>
-          {document?.collabeditors.map((collabeditor, i) => (
+          {collabeditors.map((collabeditor, i) => (
             <CollabeditorRow key={`collabeditor-${i}`}>
               {/* <Collabeditor
                 collabeditor={collabeditor}

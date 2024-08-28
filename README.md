@@ -1,15 +1,6 @@
 ## To Do
 
-- socket.io events
-
-  - collabeditor joins
-  - collabeditor leaves
-  - body change
-  - title change
-  - add collabeditor
-  - change collabeditor permission
-  - remove collabeditor
-
+- collabeditor cursors
 - collabeditor permissions
   - all (do everything)
   - edit (remove delete button)
@@ -18,14 +9,19 @@
   - all (do everything)
   - edit (allow edit and view, no delete)
   - view (read only, no add)
-- socket.io integration
 - read only view
+
+- test thoroughly for errors
 
 optional
 
 - highlighting
 - publish
 - elegant loading
+
+bugs
+
+- collabeditor changes color when certain ones leave
 
 # Getting Started with Create React App
 

@@ -73,10 +73,6 @@ export default function Collabeditor(props) {
     setMatchedUser(users?.filter((user) => user._id === collabeditor)[0]);
   }, [collabeditor]);
 
-  useEffect(() => {
-    console.log(matchedUser);
-  }, [matchedUser]);
-
   return (
     <Container>
       <Circle $index={index}>{matchedUser?.name?.toLowerCase()[0]}</Circle>

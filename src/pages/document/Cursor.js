@@ -7,8 +7,8 @@ const Line = styled.div`
   position: absolute;
   width: 2px;
   height: 19px;
-  left: ${(props) => `${props.$selectionPosition[0][0]}px`};
-  top: ${(props) => `${props.$selectionPosition[0][1]}px`};
+  left: ${(props) => `${props.$cursorPixelLocation[0][0]}px`};
+  top: ${(props) => `${props.$cursorPixelLocation[0][1]}px`};
   background: ${(props) => {
     if (props.$index < 5) {
       return colorsArr[props.$index * 2];
@@ -44,12 +44,16 @@ const Tag = styled.div`
 `;
 
 export default function Cursor(props) {
-  const { collabeditor, index, selectionPosition } = props;
+  const { collabeditor, index, cursorPixelLocation, users } = props;
+
+  // useEffect(() => {}, []);
+  // const name = users.filter((user) => user._id === collabeditor)[0].name;
 
   return (
-    <Line $index={index} $selectionPosition={selectionPosition}>
+    <Line $index={index} $cursorPixelLocation={cursorPixelLocation.current}>
       <TagContainer>
-        <Tag $index={index}>{collabeditor?.name}</Tag>
+        {/* <Tag $index={index}>{name}</Tag> */}
+        <Tag $index={index}>test</Tag>
       </TagContainer>
     </Line>
   );
