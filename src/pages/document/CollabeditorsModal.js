@@ -72,8 +72,6 @@ export default function CollabeditorsModal(props) {
       }
     });
 
-    console.log(updatedCollabeditors);
-
     updateDocument(
       {
         collabeditors: updatedCollabeditors,
@@ -178,6 +176,7 @@ export default function CollabeditorsModal(props) {
                 onChange={(e) => {
                   updatePermissions(e, collabeditor);
                 }}
+                defaultValue={collabeditor.permissions}
               >
                 <option
                   value="all"
@@ -229,6 +228,7 @@ export default function CollabeditorsModal(props) {
             onChange={(e) => {
               setAddPermissions(e.target.value);
             }}
+            defaultValue={addPermissions}
           >
             <option
               value="all"

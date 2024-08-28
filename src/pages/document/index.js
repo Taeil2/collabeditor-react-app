@@ -43,101 +43,110 @@ const Content = styled.div`
 
 // TODO: polish cursor tracking
 export default function Document(props) {
-  const { users, setUsers } = props;
+  const { users, setUsers, currentUser, setCurrentUser } = props;
 
-  const [document, setDocument] = useState();
+  // document
+  const documentFetched = useRef(false);
+  const document = useRef();
+  const [currentUsers, setCurrentUsers] = useState({});
+
+  // content
+  const nameRef = useRef();
+  const bodyRef = useRef();
   const [value, setValue] = useState("");
+
+  // cursor tracking
+  const [cursorLocation, setCursorLocation] = useState([0, 0]);
+  const [cursorCharLocation, setCursorCharLocation] = useState([
+    [1, 1],
+    [1, 1],
+  ]);
   const dragging = useRef(false);
   const selection = useRef([0, 0]);
+
+  const characterPosition = useRef([0, 0]); // character position
   const [selectionPosition, setSelectionPosition] = useState([
     [1, 0],
     [1, 0],
-  ]);
+  ]); // cursor position (by pixel, x and y)
   const ghostDivRef = useRef(null);
   const [ghostDivContent, setGhostDivContent] = useState();
 
   const socket = io(serverUrl);
-  const [isConnected, setIsConnected] = useState(socket.connected);
 
   const params = useParams();
 
+  // when current user has loaded, fetch the document
   useEffect(() => {
-    console.log("document", document);
-  }, [document]);
+    if (currentUser && !documentFetched.current) {
+      fetchDocument(params.id);
+    }
+  }, [currentUser]);
 
+  // on disconnect, leave the socket.io room
   useEffect(() => {
-    fetchDocument(params.id);
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("foo", onFooEvent);
+    // socket.on("connect", onConnect); // ignoring on connect function (left as a note)
+    socket.on("disconnect", () => {
+      if (document.current) {
+        socket.emit("leave", {
+          document: document,
+          user: currentUser,
+        });
+      }
+    });
   }, []);
-
-  function onConnect() {
-    setIsConnected(true);
-    console.log("connected");
-  }
-
-  function onDisconnect() {
-    setIsConnected(false);
-    console.log("disconnected");
-  }
-
-  function onFooEvent(value) {
-    // setFooEvents((previous) => [...previous, value]);
-  }
 
   const fetchDocument = async (id) => {
     const fetchedDocument = await getDocument(id);
-    setDocument(fetchedDocument);
-    setValue(fetchedDocument.content);
 
-    // join socket.io for the room
-    console.log(socket);
-    console.log(socket.connected);
-    // socket.join(fetchedDocument._id);
-    // socket.emit("connect", fetchedDocument);
+    socket.emit("join", {
+      document: fetchedDocument,
+      user: currentUser,
+    });
   };
 
-  // const connectToSocketIo = (document) => {
-  //   // socket.emit("chat message", input.value);
+  // when anyone joins, update the document
+  socket.on("join", (updatedDocument) => {
+    document.current = updatedDocument;
+    if (bodyRef.current) {
+      bodyRef.current.value = updatedDocument?.content;
+    }
+    if (nameRef.current) {
+      nameRef.current.value = updatedDocument?.name;
+    }
+  });
 
-  //   // broadcast to all connected clients in the room
-  //   io.to("some room").emit("hello", "world");
+  // when someone leaves, update the current users
+  socket.on("leave", (updatedDocument) => {
+    document.current = updatedDocument;
+  });
 
-  //   // broadcast to all connected clients except those in the room
-  //   io.except("some room").emit("hello", "world");
+  socket.on("body", (updatedDocument) => {
+    document.current = updatedDocument;
+    bodyRef.current.value = updatedDocument.content;
+    // update other things as well.
+  });
 
-  //   // leave the room
-  //   socket.leave("some room");
-  // };
+  socket.on("name", (updatedDocument) => {
+    document.current = updatedDocument;
+    nameRef.current.value = updatedDocument.name;
+  });
 
-  // const fetchUsers = async () => {
-  //   const fetchedUsers = await getUsers();
-  //   setUsers(fetchedUsers);
-  // };
+  // useEffect(() => {
+  //   setGhostDiv();
+  // }, [value]);
 
-  useEffect(() => {
-    setGhostDiv();
-  }, [value]);
-
-  useEffect(() => {
-    setCursor();
-  }, [ghostDivContent]);
+  // useEffect(() => {
+  //   setCursor();
+  // }, [ghostDivContent]);
 
   const textareaOnChange = (e) => {
-    setValue(e.target.value);
-    selection.current = [e.target.selectionStart, e.target.selectionEnd];
-
-    // TODO: store all document changes in a "state" across socket.io users. save the shared document at the right times.
-    // after 500 ms of not typing in the header
-    // after 500 ms of not typing in the body (any user)
-    // after any collabeditor change
-    // set a timer at 500 ms. if there are 500 ms in between key presses, save.
-    const timer = setTimeout(() => {
-      updateDocument(); // missing document data atm
-    }, 500);
-    clearInterval(timer);
+    socket.emit("body", {
+      document: document.current,
+      // user: currentUser,
+      body: e.target.value,
+    });
+    // selection.current = [e.target.selectionStart, e.target.selectionEnd];
   };
 
   // on mouse or key down
@@ -277,7 +286,12 @@ export default function Document(props) {
 
   return (
     <>
-      <Header document={document} setDocument={setDocument} users={users} />
+      <Header
+        document={document}
+        users={users}
+        nameRef={nameRef}
+        socket={socket}
+      />
       <Page>
         <Content>
           <textarea
@@ -304,7 +318,7 @@ export default function Document(props) {
                 textareaMouseKeyUp(e);
               }
             }}
-            value={value}
+            ref={bodyRef}
           />
           <Cursor
             collabeditor={document?.owner}

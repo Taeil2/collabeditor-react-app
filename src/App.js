@@ -10,7 +10,7 @@ import Document from "./pages/document";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 
-import { getUsers } from "./server/users";
+import { getUsers, addUser } from "./server/users";
 
 const Loading = styled.div`
   display: flex;
@@ -21,9 +21,10 @@ const Loading = styled.div`
 `;
 
 export default function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
   const [users, setUsers] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -32,6 +33,39 @@ export default function App() {
   const fetchUsers = async () => {
     const fetchedUsers = await getUsers();
     setUsers(fetchedUsers);
+  };
+
+  useEffect(() => {
+    // if there is no current user, set the current user
+    if (!currentUser) {
+      if (users && user) {
+        const matchedUser = users.filter((u) => u.email === user.email);
+        if (matchedUser.length) {
+          setCurrentUser(matchedUser[0]);
+        } else {
+          // otherwise, create a new user
+          createNewUser();
+        }
+      }
+    }
+  }, [users, user]);
+
+  const createNewUser = async () => {
+    if (user.given_name) {
+      const newUser = await addUser(user.email, user.given_name);
+      setCurrentUser({
+        _id: newUser.insertedId,
+        email: user.email,
+        name: user.given_name,
+      });
+    } else {
+      const newUser = await addUser(user.email, "");
+      setCurrentUser({
+        _id: newUser.insertedId,
+        email: user.email,
+        name: "",
+      });
+    }
   };
 
   return (
@@ -56,11 +90,25 @@ export default function App() {
               <Routes>
                 <Route
                   path="/"
-                  element={<Home users={users} setUsers={setUsers} />}
+                  element={
+                    <Home
+                      users={users}
+                      setUsers={setUsers}
+                      currentUser={currentUser}
+                      setCurrentUser={setCurrentUser}
+                    />
+                  }
                 />
                 <Route
                   path="document/:id"
-                  element={<Document users={users} setUsers={setUsers} />}
+                  element={
+                    <Document
+                      users={users}
+                      setUsers={setUsers}
+                      currentUser={currentUser}
+                      setCurrentUser={setCurrentUser}
+                    />
+                  }
                 />
               </Routes>
             </BrowserRouter>

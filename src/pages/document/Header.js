@@ -39,20 +39,17 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const { document, setDocument, users } = props;
+  const { document, users, nameRef, socket } = props;
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
-  const [documentName, setDocumentName] = useState(document?.name);
+  // const [documentName, setDocumentName] = useState(document?.name);
 
-  const changeTitle = (e) => {
-    setDocumentName(e.target.value);
-    // send to socket.io on every keypress
-    // update from socket.io on every keypress
+  const changeName = (e) => {
+    socket.emit("name", {
+      document: document.current,
+      name: e.target.value,
+    });
   };
-
-  // after timeout, update document, set document
-  // updateDocument();
-  // setDocument();
 
   return (
     <Container>
@@ -63,8 +60,8 @@ export default function Header(props) {
         <input
           type="text"
           placeholder="Document Name"
-          value={documentName}
-          onChange={changeTitle}
+          onChange={changeName}
+          ref={nameRef}
         />
       </div>
       <div>
@@ -74,14 +71,16 @@ export default function Header(props) {
           index={0}
           key={`collabeditor-0`}
         />
-        {document?.collabeditors?.map((collabeditor, i) => (
-          <Collabeditor
-            collabeditor={collabeditor?.id}
-            users={users}
-            index={i + 1}
-            key={`collabeditor-${i + 1}`}
-          />
-        ))}
+        {/* {document.current &&
+          document.current.currentUsers &&
+          document.current.currentUsers?.map((collabeditor, i) => (
+            <Collabeditor
+              collabeditor={collabeditor?.id}
+              users={users}
+              index={i + 1}
+              key={`collabeditor-${i + 1}`}
+            />
+          ))} */}
         <Button
           icon={<IoPeople />}
           text="collabeditors"
@@ -92,7 +91,7 @@ export default function Header(props) {
         {collabeditorsOpen && (
           <CollabeditorsModal
             document={document}
-            setDocument={setDocument}
+            // setDocument={setDocument}
             setShowModal={setCollabeditorsOpen}
             users={users}
           />

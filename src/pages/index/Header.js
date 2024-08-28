@@ -34,6 +34,7 @@ export default function Header(props) {
   const [changeNameOpen, setChangeNameOpen] = useState(false);
   const { logout } = useAuth0();
 
+  // if user has no name, show name modal
   useEffect(() => {
     if (currentUser?.name === "") {
       setChangeNameOpen(true);
