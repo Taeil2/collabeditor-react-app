@@ -65,13 +65,17 @@ const OwnerLabel = styled.div`
 `;
 
 export default function Collabeditor(props) {
-  const { collabeditor, index, showTag = true, users } = props;
+  const { collabeditor, index, showTag = true, users, isOwner = false } = props;
 
   const [matchedUser, setMatchedUser] = useState();
 
   useEffect(() => {
     setMatchedUser(users?.filter((user) => user._id === collabeditor)[0]);
   }, [collabeditor]);
+
+  useEffect(() => {
+    console.log(matchedUser);
+  }, [matchedUser]);
 
   return (
     <Container>
@@ -81,7 +85,7 @@ export default function Collabeditor(props) {
           {matchedUser?.name?.toLowerCase()}
         </Tag>
       )}
-      {index === 0 && <OwnerLabel>owner</OwnerLabel>}
+      {isOwner && <OwnerLabel>owner</OwnerLabel>}
     </Container>
   );
 }

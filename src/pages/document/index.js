@@ -48,11 +48,11 @@ export default function Document(props) {
   // document
   const documentFetched = useRef(false);
   const document = useRef();
-  const [currentUsers, setCurrentUsers] = useState({});
 
   // content
   const nameRef = useRef();
   const bodyRef = useRef();
+  const [currentUsers, setCurrentUsers] = useState({});
   const [value, setValue] = useState("");
 
   // cursor tracking
@@ -86,14 +86,25 @@ export default function Document(props) {
   // on disconnect, leave the socket.io room
   useEffect(() => {
     // socket.on("connect", onConnect); // ignoring on connect function (left as a note)
-    socket.on("disconnect", () => {
+
+    return () => {
       if (document.current) {
         socket.emit("leave", {
-          document: document,
+          document: document.current,
           user: currentUser,
         });
       }
-    });
+    };
+    // socket.on("disconnect", () => {
+    //   console.log("disconnecting");
+    //   if (document.current) {
+    //     console.log("leaving");
+    //     socket.emit("leave", {
+    //       document: document,
+    //       user: currentUser,
+    //     });
+    //   }
+    // });
   }, []);
 
   const fetchDocument = async (id) => {
@@ -114,11 +125,14 @@ export default function Document(props) {
     if (nameRef.current) {
       nameRef.current.value = updatedDocument?.name;
     }
+    setCurrentUsers(updatedDocument.currentUsers);
   });
 
   // when someone leaves, update the current users
   socket.on("leave", (updatedDocument) => {
     document.current = updatedDocument;
+    setCurrentUsers(updatedDocument.currentUsers);
+    console.log("updating users", updatedDocument.currentUsers);
   });
 
   socket.on("body", (updatedDocument) => {
@@ -288,6 +302,7 @@ export default function Document(props) {
     <>
       <Header
         document={document}
+        currentUsers={currentUsers}
         users={users}
         nameRef={nameRef}
         socket={socket}

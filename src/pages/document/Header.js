@@ -39,7 +39,7 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const { document, users, nameRef, socket } = props;
+  const { document, users, currentUsers, nameRef, socket } = props;
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
   // const [documentName, setDocumentName] = useState(document?.name);
@@ -65,22 +65,23 @@ export default function Header(props) {
         />
       </div>
       <div>
-        <Collabeditor
+        {Object.keys(currentUsers).map((key, i) => {
+          return (
+            <Collabeditor
+              collabeditor={key}
+              users={users}
+              index={i}
+              isOwner={document.current.owner === key ? true : false}
+              key={`collabeditor-${i}`}
+            />
+          );
+        })}
+        {/* <Collabeditor
           collabeditor={document?.owner}
           users={users}
           index={0}
           key={`collabeditor-0`}
-        />
-        {/* {document.current &&
-          document.current.currentUsers &&
-          document.current.currentUsers?.map((collabeditor, i) => (
-            <Collabeditor
-              collabeditor={collabeditor?.id}
-              users={users}
-              index={i + 1}
-              key={`collabeditor-${i + 1}`}
-            />
-          ))} */}
+        /> */}
         <Button
           icon={<IoPeople />}
           text="collabeditors"
