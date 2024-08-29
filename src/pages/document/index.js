@@ -48,7 +48,7 @@ export default function Document(props) {
 
   // document
   const documentFetched = useRef(false);
-  const document = useRef();
+  const document = useRef({ content: "" });
 
   // content
   const nameRef = useRef();
@@ -70,7 +70,13 @@ export default function Document(props) {
   // everyone's cursors
   const cursorLocations = useRef({});
 
-  const socket = io(serverUrl);
+  // connect to the socket.io server on load
+  const socket = io(serverUrl, {
+    autoConnect: false,
+  });
+  useEffect(() => {
+    socket.connect();
+  }, []);
 
   const params = useParams();
 
@@ -83,14 +89,41 @@ export default function Document(props) {
 
   // on disconnect, leave the socket.io room
   useEffect(() => {
+    socket.on("connect", () => {
+      console.log("on connect", socket);
+    });
+    socket.on("disconnect", () => {
+      console.log("on disconnect");
+    });
+    socket.on("foo", () => {
+      console.log("on foo");
+    });
+
     return () => {
-      if (document.current) {
-        socket.emit("leave", {
-          document: document.current,
-          user: currentUser,
-        });
-      }
+      socket.off("connect", () => {
+        console.log("off connect");
+      });
+      socket.off("disconnect", () => {
+        console.log("off disconnect");
+      });
+      socket.off("foo", () => {
+        console.log("off foo");
+      });
     };
+
+    // socket.emit("leave", {
+    //   document: document.current,
+    //   user: currentUser,
+    // });
+
+    // return () => {
+    //   if (document.current) {
+    //     socket.emit("leave", {
+    //       document: document.current,
+    //       user: currentUser,
+    //     });
+    //   }
+    // };
   }, []);
 
   const fetchDocument = async (id) => {
