@@ -17,7 +17,6 @@ Notes
 
 ## To Do
 
-- show the login page on load if not logged in.
 - collabeditor permissions
   - all (do everything)
   - edit (remove delete button)

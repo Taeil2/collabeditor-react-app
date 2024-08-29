@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
@@ -8,7 +8,6 @@ import Home from "./pages/index";
 import Document from "./pages/document";
 
 import LoginButton from "./components/LoginButton";
-import LogoutButton from "./components/LogoutButton";
 
 import { getUsers, addUser } from "./server/users";
 
@@ -21,11 +20,12 @@ const Loading = styled.div`
 `;
 
 export default function App() {
-  const { isAuthenticated, isLoading, user } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, isLoading, user } = useAuth0();
 
   const [users, setUsers] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
+  // fetch the users (can begin fetching before authentication is checked)
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -34,6 +34,14 @@ export default function App() {
     const fetchedUsers = await getUsers();
     setUsers(fetchedUsers);
   };
+
+  // redirect to login if user is not authenticated
+  useEffect(() => {
+    // if loading is done and user is not authenticated, user is not authenticated
+    if (!isLoading && !isAuthenticated) {
+      loginWithRedirect();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     // if there is no current user, set the current user
@@ -71,70 +79,35 @@ export default function App() {
   return (
     <GlobalStyles>
       <main>
-        {/* if disabling auth0 */}
-        {/* <BrowserRouter basename="/">
-          <Routes>
-            <Route
-              path="/"
-              element={<Home users={users} setUsers={setUsers} />}
-            />
-            <Route
-              path="document/:id"
-              element={<Document users={users} setUsers={setUsers} />}
-            />
-          </Routes>
-        </BrowserRouter> */}
-        <>
-          {isAuthenticated && (
-            <BrowserRouter basename="/">
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <Home
-                      users={users}
-                      setUsers={setUsers}
-                      currentUser={currentUser}
-                      setCurrentUser={setCurrentUser}
-                    />
-                  }
-                />
-                <Route
-                  path="document/:id"
-                  element={
-                    <Document
-                      users={users}
-                      setUsers={setUsers}
-                      currentUser={currentUser}
-                      setCurrentUser={setCurrentUser}
-                    />
-                  }
-                />
-              </Routes>
-            </BrowserRouter>
-          )}
-          {!isLoading && !isAuthenticated && (
-            <div>
-              <p>not loading, not authenticated</p>
-              <LoginButton />
-              <LogoutButton />
-            </div>
-          )}
-          {isLoading && !isAuthenticated && (
-            <div>
-              <Loading>loading, not authenticated</Loading>
-              <LoginButton />
-              <LogoutButton />
-            </div>
-          )}
-          {isLoading && isAuthenticated && (
-            <div>
-              <Loading>loading, authenticated</Loading>
-              <LoginButton />
-              <LogoutButton />
-            </div>
-          )}
-        </>
+        {!isAuthenticated && <Loading>Loading</Loading>}
+        {isAuthenticated && (
+          <BrowserRouter basename="/">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    users={users}
+                    setUsers={setUsers}
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
+                  />
+                }
+              />
+              <Route
+                path="document/:id"
+                element={
+                  <Document
+                    users={users}
+                    setUsers={setUsers}
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
+                  />
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        )}
       </main>
     </GlobalStyles>
   );
