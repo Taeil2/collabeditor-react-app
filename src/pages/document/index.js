@@ -25,7 +25,7 @@ const Content = styled.div`
   textarea {
     width: 100%;
     height: 1058.82353px; // 9 inch height: 1000px / 8.5 * 9
-    height: 100px;
+    // height: 100px;
     resize: none;
     border: 0;
     border: 1px solid #eee;
@@ -34,6 +34,7 @@ const Content = styled.div`
     caret-color: transparent;
   }
   .ghostBody {
+    display: none;
     width: 100%;
     height: 100px;
     border: 1px solid #eee;
@@ -296,8 +297,6 @@ export default function Document(props) {
       }
 
       cursorPixelLocation.current = [position1, position2];
-      console.log(cursorPixelLocation.current[0]);
-      console.log(cursorPixelLocation.current[1]);
     }
   };
 
