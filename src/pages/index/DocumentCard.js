@@ -64,16 +64,25 @@ export default function DocumentCard(props) {
   const { document, documents, setDocuments, users } = props;
 
   const date = new Date(document.updated);
-  const hours = date.getHours() % 12;
+
+  let hours = date.getHours() % 12;
   let ampm = "am";
   if (hours > 12) {
     ampm = "pm";
+  }
+  if (hours === 0) {
+    hours = 12;
+  }
+
+  let minutes = date.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
   }
   const dateString = (
     <span>
       {date.getMonth()}/{date.getDate()}
       &nbsp;&nbsp;
-      {hours}:{date.getMinutes()}
+      {hours}:{minutes}
       {ampm}
     </span>
   );
