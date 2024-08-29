@@ -35,6 +35,7 @@ optional
 - highlighting
 - publish
 - elegant loading
+- redirect to document page after login (if accessing a document URL)
 
 bugs
 

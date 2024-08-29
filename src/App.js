@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
@@ -6,8 +6,6 @@ import styled from "styled-components";
 import GlobalStyles from "./styles/global";
 import Home from "./pages/index";
 import Document from "./pages/document";
-
-import LoginButton from "./components/LoginButton";
 
 import { getUsers, addUser } from "./server/users";
 
