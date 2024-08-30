@@ -43,6 +43,11 @@ const Content = styled.div`
   }
 `;
 
+// socket needs to be declared outside of the function
+const socket = io(serverUrl, {
+  autoConnect: false,
+});
+
 // TODO: polish cursor tracking
 export default function Document(props) {
   const { users, setUsers, currentUser, setCurrentUser } = props;
@@ -71,10 +76,7 @@ export default function Document(props) {
   // everyone's cursors
   const cursorLocations = useRef({});
 
-  // connect to the socket.io server on load
-  const socket = io(serverUrl, {
-    autoConnect: false,
-  });
+  // connect to socket.io on load
   useEffect(() => {
     socket.connect();
   }, []);
@@ -147,10 +149,12 @@ export default function Document(props) {
   });
 
   const textareaOnChange = (e) => {
-    console.log("emitting", e.target.value);
+    console.log("socket", socket);
+
     socket.emit("body", {
       document: document.current,
       body: e.target.value,
+      // user: currentUser,
     });
 
     cursorLocation.current = "body";
@@ -158,7 +162,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ];
-    setGhostBody();
+    // setGhostBody();
   };
 
   // on mouse or key down
@@ -170,7 +174,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ];
-    setGhostBody();
+    // setGhostBody();
     textareaDraggingScrolling(e);
   };
 
@@ -181,7 +185,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ];
-    setGhostBody();
+    // setGhostBody();
     setTimeout(() => {
       if (dragging.current) {
         textareaDraggingScrolling(e);
@@ -197,7 +201,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ];
-    setGhostBody();
+    // setGhostBody();
   };
 
   const setGhostBody = () => {
