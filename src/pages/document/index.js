@@ -31,7 +31,8 @@ const Content = styled.div`
     border: 1px solid #eee;
     font-family: Noto Sans;
     font-size: 14px;
-    caret-color: transparent;
+    // to hide cursor and replace with custom ones
+    // caret-color: transparent;
   }
   .ghostBody {
     display: none;
@@ -87,35 +88,19 @@ export default function Document(props) {
     }
   }, [currentUser]);
 
-  // on disconnect, leave the socket.io room
   useEffect(() => {
-    // connect event is not working
-    // socket.on("connect", () => {});
+    // use join event instead of connect, because document is not gathered yet.
+    // socket.on("connect", () => {
+    //   console.log("on connect");
+    // });
 
-    socket.on("connect", () => {
-      console.log("on connect");
-      socket.emit("message", "on connect");
-    });
+    // on disconnect, leave the socket.io room
     return () => {
       socket.emit("leave", {
         document: document.current,
         user: currentUser,
       });
     };
-
-    // socket.emit("leave", {
-    //   document: document.current,
-    //   user: currentUser,
-    // });
-
-    // return () => {
-    //   if (document.current) {
-    //     socket.emit("leave", {
-    //       document: document.current,
-    //       user: currentUser,
-    //     });
-    //   }
-    // };
   }, []);
 
   const fetchDocument = async (id) => {
@@ -162,9 +147,9 @@ export default function Document(props) {
   });
 
   const textareaOnChange = (e) => {
+    console.log("emitting", e.target.value);
     socket.emit("body", {
       document: document.current,
-      // user: currentUser,
       body: e.target.value,
     });
 

@@ -31,6 +31,7 @@ const Container = styled.div`
       font-family: Open Sans;
       font-size: 32px;
       height: 41px; // it was cutting off descenders
+      // cursor: text !important;
     }
   }
   > div:last-of-type {
@@ -76,12 +77,13 @@ export default function Header(props) {
       </div>
       <div>
         {Object.keys(currentUsers).map((key, i) => {
+          const userId = currentUsers[key].userId;
           return (
             <Collabeditor
-              collabeditor={key}
+              collabeditor={userId}
               users={users}
               index={i}
-              isOwner={document.current.owner === key ? true : false}
+              isOwner={document.current.owner === userId ? true : false}
               key={`collabeditor-${i}`}
             />
           );

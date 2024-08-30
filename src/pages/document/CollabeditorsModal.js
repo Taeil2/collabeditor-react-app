@@ -11,8 +11,6 @@ import Autocomplete from "../../components/AutoComplete";
 import Collabeditor from "../../components/Collabeditor";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-import { updateDocument } from "../../server/documents";
-
 const CollabeditorRow = styled.div`
   display: grid;
   // grid-template-columns: 25px 100px 100px 50px; // to enable collabeditor circles
