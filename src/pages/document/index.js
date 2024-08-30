@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Prompt } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -89,25 +89,17 @@ export default function Document(props) {
 
   // on disconnect, leave the socket.io room
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("on connect", socket);
-    });
-    socket.on("disconnect", () => {
-      console.log("on disconnect");
-    });
-    socket.on("foo", () => {
-      console.log("on foo");
-    });
+    // connect event is not working
+    // socket.on("connect", () => {});
 
+    socket.on("connect", () => {
+      console.log("on connect");
+      socket.emit("message", "on connect");
+    });
     return () => {
-      socket.off("connect", () => {
-        console.log("off connect");
-      });
-      socket.off("disconnect", () => {
-        console.log("off disconnect");
-      });
-      socket.off("foo", () => {
-        console.log("off foo");
+      socket.emit("leave", {
+        document: document.current,
+        user: currentUser,
       });
     };
 
@@ -372,12 +364,12 @@ export default function Document(props) {
             }}
             ref={bodyRef}
           />
-          <Cursor
+          {/* <Cursor
             collabeditor={document.current ? document.current.owner : ""}
             index={1}
             cursorPixelLocation={cursorPixelLocation}
             users={users}
-          />
+          /> */}
           <div className="ghostBody" ref={ghostBodyRef}>
             {ghostBodyContent.current}
           </div>
