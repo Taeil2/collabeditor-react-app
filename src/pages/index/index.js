@@ -28,6 +28,7 @@ export default function Home(props) {
           documents={documents}
           setDocuments={setDocuments}
           users={users}
+          currentUser={currentUser}
         />
       ))}
     </>

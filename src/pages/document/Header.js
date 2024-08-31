@@ -48,6 +48,7 @@ export default function Header(props) {
     setCollabeditors,
     nameRef,
     socket,
+    permissions,
   } = props;
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
@@ -70,6 +71,7 @@ export default function Header(props) {
           placeholder="Document Name"
           onChange={changeName}
           ref={nameRef}
+          readOnly={permissions === "view" ? true : false}
         />
         {/* <div className="ghostName" ref={ghostNameRef}>
           {ghostNameContent}

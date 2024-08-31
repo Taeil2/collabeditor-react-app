@@ -9,6 +9,7 @@ import { updateDocument, getDocument } from "../../server/documents";
 
 import { io } from "socket.io-client";
 import serverUrl from "../../server/serverUrl";
+import { getPermissions } from "../../utils";
 
 const Page = styled.div`
   width: 100%;
@@ -55,6 +56,7 @@ export default function Document(props) {
   // document
   const documentFetched = useRef(false);
   const document = useRef({ content: "" });
+  const [permissions, setPermissions] = useState(null);
 
   // content
   const nameRef = useRef();
@@ -108,6 +110,8 @@ export default function Document(props) {
   const fetchDocument = async (id) => {
     const fetchedDocument = await getDocument(id);
 
+    setPermissions(getPermissions(fetchedDocument, currentUser));
+
     socket.emit("join", {
       document: fetchedDocument,
       user: currentUser,
@@ -149,8 +153,6 @@ export default function Document(props) {
   });
 
   const textareaOnChange = (e) => {
-    console.log("socket", socket);
-
     socket.emit("body", {
       document: document.current,
       body: e.target.value,
@@ -324,6 +326,7 @@ export default function Document(props) {
         socket={socket}
         collabeditors={collabeditors}
         setCollabeditors={setCollabeditors}
+        permissions={permissions}
       />
       <Page>
         <Content>
@@ -352,6 +355,7 @@ export default function Document(props) {
               }
             }}
             ref={bodyRef}
+            readOnly={permissions === "view" ? true : false}
           />
           {/* <Cursor
             collabeditor={document.current ? document.current.owner : ""}

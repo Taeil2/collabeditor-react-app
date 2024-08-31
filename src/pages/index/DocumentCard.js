@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { grays } from "../../styles/styles";
 
@@ -9,6 +10,7 @@ import Button from "../../components/Button";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 import { deleteDocument } from "../../server/documents";
+import { getPermissions } from "../../utils";
 
 const Container = styled.div`
   width: 100%;
@@ -61,7 +63,13 @@ const Card = styled.div`
 `;
 
 export default function DocumentCard(props) {
-  const { document, documents, setDocuments, users } = props;
+  const { document, documents, setDocuments, users, currentUser } = props;
+
+  const [permissions, setPermissions] = useState(null);
+
+  useEffect(() => {
+    setPermissions(getPermissions(document, currentUser));
+  }, []);
 
   const date = new Date(document.updated);
 
@@ -119,18 +127,20 @@ export default function DocumentCard(props) {
               <h6>updated</h6>
               <p>{dateString}</p>
             </div>
-            <Button
-              icon={<FaRegTrashAlt />}
-              onClick={(e) => {
-                e.preventDefault();
-                deleteDocument(document?._id);
-                let documentsList = documents.filter(
-                  (d) => d._id !== document?._id
-                );
-                setDocuments(documentsList);
-              }}
-              color="red"
-            />
+            {(permissions === "owner" || permissions === "all") && (
+              <Button
+                icon={<FaRegTrashAlt />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  deleteDocument(document?._id);
+                  let documentsList = documents.filter(
+                    (d) => d._id !== document?._id
+                  );
+                  setDocuments(documentsList);
+                }}
+                color="red"
+              />
+            )}
           </div>
         </Card>
       </Link>

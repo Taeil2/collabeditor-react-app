@@ -25,7 +25,6 @@ Notes
   - all (do everything)
   - edit (allow edit and view, no delete)
   - view (read only, no add)
-- read only view
 - collabeditor cursors
 
 - test thoroughly for errors
