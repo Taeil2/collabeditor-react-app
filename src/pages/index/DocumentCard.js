@@ -32,11 +32,14 @@ const Card = styled.div`
   cursor: pointer;
   width: 100%;
   > div:first-of-type {
+    h3 {
+      color: ${grays.gray8};
+    }
     p {
+      color: ${grays.gray6};
       max-height: 100px;
       overflow: hidden;
       --max-lines: 5
-      color: ${grays.gray6};
       white-space: pre-line;
     }
   }

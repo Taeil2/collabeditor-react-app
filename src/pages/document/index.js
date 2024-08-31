@@ -80,6 +80,7 @@ export default function Document(props) {
 
   // connect to socket.io on load
   useEffect(() => {
+    window.scrollTo(0, 0);
     socket.connect();
   }, []);
 

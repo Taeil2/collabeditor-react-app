@@ -7,9 +7,9 @@ const GlobalStyles = styled.div`
   main {
     font-family: "Noto Sans";
     color: ${grays.gray8};
-    max-width: 1000px;
+    max-width: 1040px;
     margin: 0 auto;
-    padding: 50px 0;
+    padding: 50px 20px;
     font-size: 14px;
   }
 

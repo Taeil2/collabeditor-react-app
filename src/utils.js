@@ -2,13 +2,14 @@ const getPermissions = (document, user) => {
   if (document.owner === user._id) {
     return "owner";
   } else {
+    let permissions;
     document.collabeditors.forEach((collabeditor) => {
       if (collabeditor.id === user._id) {
-        return collabeditor.permissions;
+        permissions = collabeditor.permissions;
       }
     });
+    return permissions;
   }
-  return null;
 };
 
 export { getPermissions };
