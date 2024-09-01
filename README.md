@@ -17,23 +17,17 @@ Notes
 
 ## To Do
 
-- collabeditor permissions
-  - all (do everything)
-  - edit (remove delete button)
-  - view (make document read only)
-- collabeditors modal based on permissions
-  - all (do everything)
-  - edit (allow edit and view, no delete)
-  - view (read only, no add)
-- collabeditor cursors
-
+- change name and update it on document and on socket.io
+- clean up warnings
 - test thoroughly for errors
+- collabeditor cursors
 
 optional
 
 - highlighting
-- publish
 - elegant loading
+- responsive
+- publish
 - redirect to document page after login (if accessing a document URL)
 
 bugs
