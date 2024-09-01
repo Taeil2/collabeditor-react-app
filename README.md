@@ -17,7 +17,6 @@ Notes
 
 ## To Do
 
-- change name and update it on document and on socket.io
 - clean up warnings
 - test thoroughly for errors
 - collabeditor cursors
