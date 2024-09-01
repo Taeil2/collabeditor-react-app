@@ -29,7 +29,7 @@ const Container = styled.div`
 `;
 
 export default function Header(props) {
-  const { currentUser, setCurrentUser } = props;
+  const { currentUser, setCurrentUser, users, setUsers } = props;
 
   const [changeNameOpen, setChangeNameOpen] = useState(false);
   const { logout } = useAuth0();
@@ -51,7 +51,6 @@ export default function Header(props) {
           onClick={async () => {
             const result = await addDocument(currentUser._id);
 
-            console.log(result.insertedId);
             window.location.href = `/document/${result.insertedId}`;
           }}
         />
@@ -79,6 +78,8 @@ export default function Header(props) {
           setChangeNameOpen={setChangeNameOpen}
           currentUser={currentUser}
           setCurrentUser={setCurrentUser}
+          users={users}
+          setUsers={setUsers}
         />
       )}
     </Container>

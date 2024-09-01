@@ -22,7 +22,8 @@ const Form = styled.form`
 `;
 
 export default function NameModal(props) {
-  const { setChangeNameOpen, currentUser, setCurrentUser } = props;
+  const { setChangeNameOpen, currentUser, setCurrentUser, users, setUsers } =
+    props;
 
   const [name, setName] = useState(currentUser.name);
 
@@ -35,6 +36,18 @@ export default function NameModal(props) {
       const userUpdate = { ...currentUser };
       userUpdate.name = name;
       setCurrentUser(userUpdate);
+
+      // update the name in users, because the document cards query the users
+      // the user name gets updated in the cards
+      setUsers(
+        users.map((user) => {
+          if (user._id === currentUser._id) {
+            return userUpdate;
+          } else {
+            return user;
+          }
+        })
+      );
     }
   };
 

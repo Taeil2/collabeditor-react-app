@@ -20,7 +20,12 @@ export default function Home(props) {
 
   return (
     <>
-      <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
+      <Header
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        users={users}
+        setUsers={setUsers}
+      />
       {documents?.map((document, i) => (
         <DocumentCard
           document={document}

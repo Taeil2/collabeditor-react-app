@@ -112,7 +112,7 @@ export default function DocumentCard(props) {
             <h6>collabeditors</h6>
             <Collabeditor
               collabeditor={document?.owner}
-              // currentUser={currentUser}
+              currentUser={currentUser}
               isOwner={true}
               users={users}
               index={0}
