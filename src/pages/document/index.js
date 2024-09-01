@@ -140,12 +140,16 @@ export default function Document(props) {
 
   socket.on("body", (updatedDocument) => {
     document.current = updatedDocument;
-    bodyRef.current.value = updatedDocument.content;
+    if (bodyRef.current) {
+      bodyRef.current.value = updatedDocument.content;
+    }
   });
 
   socket.on("name", (updatedDocument) => {
     document.current = updatedDocument;
-    nameRef.current.value = updatedDocument.name;
+    if (nameRef.current) {
+      nameRef.current.value = updatedDocument.name;
+    }
   });
 
   socket.on("collabeditors", (updatedDocument) => {

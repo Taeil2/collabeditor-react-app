@@ -50,7 +50,8 @@ const Form = styled.form`
 `;
 
 export default function CollabeditorsModal(props) {
-  const { document, collabeditors, setShowModal, users, socket } = props;
+  const { document, collabeditors, setShowModal, users, socket, permissions } =
+    props;
 
   const [name, setName] = useState("");
   const [selectedCollabeditor, setSelectedCollabeditor] = useState({});
@@ -147,90 +148,104 @@ export default function CollabeditorsModal(props) {
               <div className="name">
                 {users?.filter((user) => user._id === collabeditor.id)[0].name}
               </div>
+              {permissions !== "view" && (
+                <select
+                  onChange={(e) => {
+                    updatePermissions(e, collabeditor);
+                  }}
+                  defaultValue={collabeditor.permissions}
+                >
+                  <option
+                    value="all"
+                    selected={collabeditor.permissions === "all" ? true : false}
+                  >
+                    all
+                  </option>
+                  <option
+                    value="edit"
+                    selected={
+                      collabeditor.permissions === "edit" ? true : false
+                    }
+                  >
+                    edit
+                  </option>
+                  <option
+                    value="view"
+                    selected={
+                      collabeditor.permissions === "view" ? true : false
+                    }
+                  >
+                    view
+                  </option>
+                </select>
+              )}
+              {console.log("permissions", permissions)}
+              {permissions === "view" && <div>{collabeditor.permissions}</div>}
+              {permissions === "owner" && permissions === "all" && (
+                <Button
+                  icon={<FaRegTrashAlt />}
+                  onClick={(e) => {
+                    removeCollabeditor(e, collabeditor);
+                  }}
+                  color="red"
+                />
+              )}
+            </CollabeditorRow>
+          ))}
+        </div>
+      }
+      {permissions !== "view" && (
+        <>
+          <h5>Add Collabeditor</h5>
+          <Form onSubmit={onSubmit}>
+            <div>
+              <label htmlFor="name">Name</label>
+              <label htmlFor="permissions">Permissions</label>
+            </div>
+            <div>
+              <Autocomplete
+                options={users}
+                value={name}
+                setValue={setName}
+                setNameSelected={setNameSelected}
+                selectedCollabeditor={selectedCollabeditor}
+                setSelectedCollabeditor={setSelectedCollabeditor}
+              />
               <select
+                id="permissions"
                 onChange={(e) => {
-                  updatePermissions(e, collabeditor);
+                  setAddPermissions(e.target.value);
                 }}
-                defaultValue={collabeditor.permissions}
+                defaultValue={addPermissions}
               >
                 <option
                   value="all"
-                  selected={collabeditor.permissions === "all" ? true : false}
+                  selected={addPermissions === "all" ? true : false}
                 >
                   all
                 </option>
                 <option
                   value="edit"
-                  selected={collabeditor.permissions === "edit" ? true : false}
+                  selected={addPermissions === "edit" ? true : false}
                 >
                   edit
                 </option>
                 <option
                   value="view"
-                  selected={collabeditor.permissions === "view" ? true : false}
+                  selected={addPermissions === "view" ? true : false}
                 >
                   view
                 </option>
               </select>
               <Button
-                icon={<FaRegTrashAlt />}
-                onClick={(e) => {
-                  removeCollabeditor(e, collabeditor);
-                }}
-                color="red"
+                type="submit"
+                text="add"
+                disabled={nameSelected ? false : true}
               />
-            </CollabeditorRow>
-          ))}
-        </div>
-      }
-      <h5>Add Collabeditor</h5>
-      <Form onSubmit={onSubmit}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <label htmlFor="permissions">Permissions</label>
-        </div>
-        <div>
-          <Autocomplete
-            options={users}
-            value={name}
-            setValue={setName}
-            setNameSelected={setNameSelected}
-            selectedCollabeditor={selectedCollabeditor}
-            setSelectedCollabeditor={setSelectedCollabeditor}
-          />
-          <select
-            id="permissions"
-            onChange={(e) => {
-              setAddPermissions(e.target.value);
-            }}
-            defaultValue={addPermissions}
-          >
-            <option
-              value="all"
-              selected={addPermissions === "all" ? true : false}
-            >
-              all
-            </option>
-            <option
-              value="edit"
-              selected={addPermissions === "edit" ? true : false}
-            >
-              edit
-            </option>
-            <option
-              value="view"
-              selected={addPermissions === "view" ? true : false}
-            >
-              view
-            </option>
-          </select>
-          <Button
-            type="submit"
-            text="add"
-            disabled={nameSelected ? false : true}
-          />
-        </div>
-      </Form>
+            </div>
+          </Form>
+        </>
+      )}
     </Modal>
   );
 }

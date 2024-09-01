@@ -10,8 +10,6 @@ import CollabeditorsModal from "./CollabeditorsModal";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoPeople } from "react-icons/io5";
 
-import { updateDocument } from "../../server/documents";
-
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -110,6 +108,7 @@ export default function Header(props) {
             setShowModal={setCollabeditorsOpen}
             users={users}
             socket={socket}
+            permissions={permissions}
           />
         )}
       </div>
