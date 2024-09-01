@@ -11,13 +11,17 @@ This is the application for the Collabeditor app. Follow these instructions to i
 - Run "npm start" on the app directory
 - Open http://localhost:3000/ in your web browser.
 
-Notes
+## Notes
 
+- To test multiple users editing synchronously
+  - Create multiple logins and set their names.
+  - Create a new document and click "collabeditors".
+  - The Add Collabeditor field autocompletes with names you have added.
 - You can open [localhost:5050 ](http://localhost:5050/) to check if the server is running.
 
 ## To Do
 
-- clean up warnings
+- run through files and do a cleanup
 - test thoroughly for errors
 - collabeditor cursors
 
