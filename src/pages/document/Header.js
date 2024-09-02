@@ -28,7 +28,7 @@ const Container = styled.div`
       width: 100%;
       background: transparent;
       border: 0;
-      font-family: Open Sans;
+      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
       font-size: 32px;
       height: 41px; // it was cutting off descenders
       // cursor: text !important;

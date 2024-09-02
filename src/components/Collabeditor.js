@@ -24,7 +24,7 @@ const Circle = styled.div`
       return colorsArr[(props.$index - 5) * 2 + 1]
     }
   }};
-  font-family: Open Sans;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
   font-size: 16px;
   color: #fff;
   display: flex;
@@ -60,7 +60,7 @@ const Tag = styled.div`
 `
 
 const OwnerLabel = styled.div`
-  font-family: Noto Sans;
+  font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
   font-size: 10px;
   color: ${grays.gray4};
 `

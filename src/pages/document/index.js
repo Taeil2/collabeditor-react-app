@@ -32,7 +32,7 @@ const Content = styled.div`
     resize: none;
     border: 0;
     border: 1px solid #eee;
-    font-family: Noto Sans;
+    font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
     font-size: 14px;
     // to hide cursor and replace with custom ones
     // caret-color: transparent;
