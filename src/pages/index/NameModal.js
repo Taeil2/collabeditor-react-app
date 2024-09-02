@@ -23,9 +23,8 @@ const Form = styled.form`
 `
 
 export default function NameModal(props) {
-  const { user, setUser, users, setUsers } = useContext(UserContext)
-  //  useContext(UserContext)
   const { setChangeNameOpen } = props
+  const { user, setUser, users, setUsers } = useContext(UserContext)
 
   const [name, setName] = useState(user.name)
 

@@ -12,4 +12,28 @@ const getPermissions = (document, user) => {
   }
 }
 
-export { getPermissions }
+const getReadableDate = (date) => {
+  let hours = date.getHours() % 12
+  let ampm = 'am'
+  if (hours > 12) {
+    ampm = 'pm'
+  }
+  if (hours === 0) {
+    hours = 12
+  }
+
+  let minutes = date.getMinutes()
+  if (minutes < 10) {
+    minutes = '0' + minutes
+  }
+  return (
+    <span>
+      {date.getMonth()}/{date.getDate()}
+      &nbsp;&nbsp;
+      {hours}:{minutes}
+      {ampm}
+    </span>
+  )
+}
+
+export { getPermissions, getReadableDate }

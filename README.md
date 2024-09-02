@@ -22,10 +22,10 @@ This is the application for the Collabeditor app. Follow these instructions to i
 ## To Do
 
 - styling broke. fix it.
-- keep names across front and back consistent (liveUsers, currentUsers / title, name / etc.)
-- run through files and do a cleanup
-- test thoroughly for errors
 - collabeditor cursors
+- keep names across front and back consistent (liveUsers, currentUsers / title, name / etc.)
+- test thoroughly for errors
+- run through files and do a cleanup
 
 optional
 

@@ -10,7 +10,7 @@ import Button from '../../components/Button'
 import { FaRegTrashAlt } from 'react-icons/fa'
 
 import { deleteDocument } from '../../server/documents'
-import { getPermissions } from '../../utils'
+import { getPermissions, getReadableDate } from '../../utils'
 import { UserContext } from '../../contexts/UserContext'
 
 const Container = styled.div`
@@ -78,28 +78,7 @@ export default function DocumentCard(props) {
   }, [])
 
   const date = new Date(document.updated)
-
-  let hours = date.getHours() % 12
-  let ampm = 'am'
-  if (hours > 12) {
-    ampm = 'pm'
-  }
-  if (hours === 0) {
-    hours = 12
-  }
-
-  let minutes = date.getMinutes()
-  if (minutes < 10) {
-    minutes = '0' + minutes
-  }
-  const dateString = (
-    <span>
-      {date.getMonth()}/{date.getDate()}
-      &nbsp;&nbsp;
-      {hours}:{minutes}
-      {ampm}
-    </span>
-  )
+  const dateString = getReadableDate(date)
 
   // TODO: truncate document content with ellipsis
   return (
@@ -109,7 +88,6 @@ export default function DocumentCard(props) {
           <div>
             <h3>{document?.name ? document.name : 'Unnamed Document'}</h3>
             <p>{document?.content}</p>
-            {/* <div>{document?.content}</div> */}
           </div>
           <div>
             <h6>collabeditors</h6>
