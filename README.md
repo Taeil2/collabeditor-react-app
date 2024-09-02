@@ -21,9 +21,7 @@ This is the application for the Collabeditor app. Follow these instructions to i
 
 ## To Do
 
-- rename all files with HTML to jsx
 - styling broke. fix it.
-- remove all errors (like use effect dependencies)
 - keep names across front and back consistent (liveUsers, currentUsers / title, name / etc.)
 - run through files and do a cleanup
 - test thoroughly for errors
