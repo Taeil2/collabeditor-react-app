@@ -30,8 +30,7 @@ const GlobalStyles = styled.div`
   }
 
   h2 {
-    font-family: 'Open Sans';
-    // font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     font-weight: 500;
     font-size: 40px;
   }
