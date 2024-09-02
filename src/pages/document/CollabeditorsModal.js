@@ -6,9 +6,8 @@ import Button from '../../components/Button'
 import { useContext, useState } from 'react'
 import { grays } from '../../styles/styles'
 
-// import { useCombobox, useSelect } from "downshift";
 import Autocomplete from '../../components/AutoComplete'
-import Collabeditor from '../../components/Collabeditor'
+// import Collabeditor from '../../components/Collabeditor'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { UserContext } from '../../contexts/UserContext'
 
