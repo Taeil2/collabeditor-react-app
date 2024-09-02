@@ -1,17 +1,18 @@
-import styled from "styled-components";
-import { useState, useEffect } from "react";
+import styled from 'styled-components'
+import { useState, useEffect, useContext } from 'react'
+import { UserContext } from '../../contexts/UserContext'
 
-import Button from "../../components/Button";
-import ButtonGroup from "../../components/ButtonGroup";
+import Button from '../../components/Button'
+import ButtonGroup from '../../components/ButtonGroup'
 
-import { FaPlus } from "react-icons/fa6";
-import { FaPen } from "react-icons/fa";
-import { MdLogout } from "react-icons/md";
+import { FaPlus } from 'react-icons/fa6'
+import { FaPen } from 'react-icons/fa'
+import { MdLogout } from 'react-icons/md'
 
-import { useAuth0 } from "@auth0/auth0-react";
-import NameModal from "./NameModal";
+import { useAuth0 } from '@auth0/auth0-react'
+import NameModal from './NameModal'
 
-import { addDocument } from "../../server/documents";
+import { addDocument } from '../../server/documents'
 
 const Container = styled.div`
   display: flex;
@@ -26,20 +27,20 @@ const Container = styled.div`
     display: inline-block;
     margin-right: 30px;
   }
-`;
+`
 
 export default function Header(props) {
-  const { currentUser, setCurrentUser, users, setUsers } = props;
+  const [changeNameOpen, setChangeNameOpen] = useState(false)
 
-  const [changeNameOpen, setChangeNameOpen] = useState(false);
-  const { logout } = useAuth0();
+  const { user } = useContext(UserContext)
+  const { logout } = useAuth0()
 
   // if user has no name, show name modal
   useEffect(() => {
-    if (currentUser?.name === "") {
-      setChangeNameOpen(true);
+    if (user?.name === '') {
+      setChangeNameOpen(true)
     }
-  }, [currentUser]);
+  }, [user])
 
   return (
     <Container>
@@ -49,9 +50,9 @@ export default function Header(props) {
           icon={<FaPlus />}
           text="new document"
           onClick={async () => {
-            const result = await addDocument(currentUser._id);
+            const result = await addDocument(user._id)
 
-            window.location.href = `/document/${result.insertedId}`;
+            window.location.href = `/document/${result.insertedId}`
           }}
         />
       </div>
@@ -59,29 +60,21 @@ export default function Header(props) {
         buttons={[
           {
             icon: <FaPen />,
-            text: "change name",
+            text: 'change name',
             onClick: () => {
-              setChangeNameOpen(true);
+              setChangeNameOpen(true)
             },
           },
           {
             icon: <MdLogout />,
-            text: "log out",
+            text: 'log out',
             onClick: () => {
-              logout({ logoutParams: { returnTo: window.location.origin } });
+              logout({ logoutParams: { returnTo: window.location.origin } })
             },
           },
         ]}
       />
-      {changeNameOpen && (
-        <NameModal
-          setChangeNameOpen={setChangeNameOpen}
-          currentUser={currentUser}
-          setCurrentUser={setCurrentUser}
-          users={users}
-          setUsers={setUsers}
-        />
-      )}
+      {changeNameOpen && <NameModal setChangeNameOpen={setChangeNameOpen} />}
     </Container>
-  );
+  )
 }

@@ -1,12 +1,13 @@
-import { useState } from "react";
-import styled from "styled-components";
+import { useContext, useState } from 'react'
+import styled from 'styled-components'
 
-import Modal from "../../components/Modal";
-import Button from "../../components/Button";
+import Modal from '../../components/Modal'
+import Button from '../../components/Button'
 
-import { grays } from "../../styles/styles";
+import { grays } from '../../styles/styles'
 
-import { updateUser } from "../../server/users";
+import { updateUser } from '../../server/users'
+import { UserContext } from '../../contexts/UserContext'
 
 const Form = styled.form`
   label {
@@ -19,37 +20,38 @@ const Form = styled.form`
     width: 200px;
     margin-right: 10px;
   }
-`;
+`
 
 export default function NameModal(props) {
-  const { setChangeNameOpen, currentUser, setCurrentUser, users, setUsers } =
-    props;
+  const { user, setUser, users, setUsers } = useContext(UserContext)
+  //  useContext(UserContext)
+  const { setChangeNameOpen } = props
 
-  const [name, setName] = useState(currentUser.name);
+  const [name, setName] = useState(user.name)
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (name.match(/^ *$/) === null) {
-      setChangeNameOpen(false);
-      await updateUser(name, currentUser._id);
-      const userUpdate = { ...currentUser };
-      userUpdate.name = name;
-      setCurrentUser(userUpdate);
+      setChangeNameOpen(false)
+      await updateUser(name, user._id)
+      const userUpdate = { ...user }
+      userUpdate.name = name
+      setUser(userUpdate)
 
       // update the name in users, because the document cards query the users
       // the user name gets updated in the cards
       setUsers(
-        users.map((user) => {
-          if (user._id === currentUser._id) {
-            return userUpdate;
+        users.map((u) => {
+          if (u._id === user._id) {
+            return userUpdate
           } else {
-            return user;
+            return u
           }
-        })
-      );
+        }),
+      )
     }
-  };
+  }
 
   return (
     <Modal closeButton={false}>
@@ -61,12 +63,12 @@ export default function NameModal(props) {
           value={name}
           placeholder=""
           onChange={(e) => {
-            setName(e.target.value);
+            setName(e.target.value)
           }}
           autoFocus
         />
         <Button type="submit" text="okay" />
       </Form>
     </Modal>
-  );
+  )
 }

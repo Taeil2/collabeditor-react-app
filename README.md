@@ -21,6 +21,8 @@ This is the application for the Collabeditor app. Follow these instructions to i
 
 ## To Do
 
+- rename all files with HTML to jsx
+- keep names across front and back consistent (liveUsers, currentUsers / title, name / etc.)
 - run through files and do a cleanup
 - test thoroughly for errors
 - collabeditor cursors
@@ -32,6 +34,7 @@ optional
 - responsive
 - publish
 - redirect to document page after login (if accessing a document URL)
+- put things in contexts
 
 bugs
 

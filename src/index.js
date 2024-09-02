@@ -1,14 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Auth0Provider } from '@auth0/auth0-react'
 
-import App from "./App";
+import { UserProvider } from './contexts/UserContext'
 
-import "./styles/global.css";
+import './styles/global.css'
 
-import { Auth0Provider } from "@auth0/auth0-react";
+import App from './App'
 
 // <React.StrictMode><App /></React.StrictMode> causes two renders.
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <Auth0Provider
     domain="dev-bn8s278zc54ocjvv.us.auth0.com"
@@ -17,6 +18,8 @@ root.render(
       redirect_uri: window.location.origin,
     }}
   >
-    <App />
-  </Auth0Provider>
-);
+    <UserProvider>
+      <App />
+    </UserProvider>
+  </Auth0Provider>,
+)

@@ -1,15 +1,17 @@
-import { useRef, useState, useEffect, Prompt } from "react";
-import { useParams } from "react-router-dom";
-import styled from "styled-components";
+import { useRef, useState, useEffect, useContext } from 'react'
+import { useParams } from 'react-router-dom'
+import styled from 'styled-components'
 
-import Header from "./Header";
-import Cursor from "./Cursor";
+import Header from './Header'
+import Cursor from './Cursor'
 
-import { updateDocument, getDocument } from "../../server/documents";
+import { getDocument } from '../../server/documents'
 
-import { io } from "socket.io-client";
-import serverUrl from "../../server/serverUrl";
-import { getPermissions } from "../../utils";
+import { io } from 'socket.io-client'
+import serverUrl from '../../server/serverUrl'
+import { getPermissions } from '../../utils'
+
+import { UserContext } from '../../contexts/UserContext'
 
 const Page = styled.div`
   width: 100%;
@@ -17,7 +19,7 @@ const Page = styled.div`
   // height: 1294px
   min-height: 1294.11765px; // 11 inch height: 1000px / 8.5 * 11 (for an 8.5x11 ratio)
   padding: 117.647059px; // 1 inch margins: 1 / 8.5 * 1000px
-`;
+`
 
 const Content = styled.div`
   width: 100%;
@@ -42,56 +44,56 @@ const Content = styled.div`
     border: 1px solid #eee;
     white-space: pre-wrap; // to investigate: break-spaces and pre-wrap work
   }
-`;
+`
 
 // socket needs to be declared outside of the function
 const socket = io(serverUrl, {
   autoConnect: false,
-});
+})
 
 // TODO: polish cursor tracking
 export default function Document(props) {
-  const { users, setUsers, currentUser, setCurrentUser } = props;
+  const { user } = useContext(UserContext)
 
   // document
-  const documentFetched = useRef(false);
-  const document = useRef({ content: "" });
-  const [permissions, setPermissions] = useState(null);
+  const documentFetched = useRef(false)
+  const document = useRef({ content: '' })
+  const [permissions, setPermissions] = useState(null)
 
   // content
-  const nameRef = useRef();
-  const bodyRef = useRef();
-  const [currentUsers, setCurrentUsers] = useState({});
-  const [collabeditors, setCollabeditors] = useState([]);
+  const nameRef = useRef()
+  const bodyRef = useRef()
+  const [liveUsers, setLiveUsers] = useState({})
+  const [collabeditors, setCollabeditors] = useState([])
 
   // track own cursor
-  const cursorLocation = useRef("header");
-  const cursorCharLocation = useRef([0, 0]);
+  const cursorLocation = useRef('header')
+  const cursorCharLocation = useRef([0, 0])
   const cursorPixelLocation = useRef([
     [1, 1],
     [1, 1],
-  ]);
-  const dragging = useRef(false);
-  const ghostBodyRef = useRef(null);
-  const ghostBodyContent = useRef("");
+  ])
+  const dragging = useRef(false)
+  const ghostBodyRef = useRef(null)
+  const ghostBodyContent = useRef('')
 
   // everyone's cursors
-  const cursorLocations = useRef({});
+  const cursorLocations = useRef({})
 
   // connect to socket.io on load
   useEffect(() => {
-    window.scrollTo(0, 0);
-    socket.connect();
-  }, []);
+    window.scrollTo(0, 0)
+    socket.connect()
+  }, [])
 
-  const params = useParams();
+  const params = useParams()
 
-  // when current user has loaded, fetch the document
+  // when the user has loaded, fetch the document
   useEffect(() => {
-    if (currentUser && !documentFetched.current) {
-      fetchDocument(params.id);
+    if (user && !documentFetched.current) {
+      fetchDocument(params.id)
     }
-  }, [currentUser]);
+  }, [user])
 
   useEffect(() => {
     // use join event instead of connect, because document is not gathered yet.
@@ -101,146 +103,146 @@ export default function Document(props) {
 
     // on disconnect, leave the socket.io room
     return () => {
-      socket.emit("leave", {
+      socket.emit('leave', {
         document: document.current,
-        user: currentUser,
-      });
-    };
-  }, []);
+        user: user,
+      })
+    }
+  }, [])
 
   const fetchDocument = async (id) => {
-    const fetchedDocument = await getDocument(id);
+    const fetchedDocument = await getDocument(id)
 
-    setPermissions(getPermissions(fetchedDocument, currentUser));
+    setPermissions(getPermissions(fetchedDocument, user))
 
-    socket.emit("join", {
+    socket.emit('join', {
       document: fetchedDocument,
-      user: currentUser,
-    });
-  };
+      user: user,
+    })
+  }
 
   // when anyone joins, update the document
-  socket.on("join", (updatedDocument) => {
-    document.current = updatedDocument;
+  socket.on('join', (updatedDocument) => {
+    document.current = updatedDocument
     if (bodyRef.current) {
-      bodyRef.current.value = updatedDocument?.content;
+      bodyRef.current.value = updatedDocument?.content
     }
     if (nameRef.current) {
-      nameRef.current.value = updatedDocument?.name;
+      nameRef.current.value = updatedDocument?.name
     }
-    setCurrentUsers(updatedDocument.currentUsers);
-    setCollabeditors(updatedDocument.collabeditors);
-  });
+    setLiveUsers(updatedDocument.currentUsers)
+    setCollabeditors(updatedDocument.collabeditors)
+  })
 
-  // when someone leaves, update the current users
-  socket.on("leave", (updatedDocument) => {
-    document.current = updatedDocument;
-    setCurrentUsers(updatedDocument.currentUsers);
-  });
+  // when someone leaves, update the live users
+  socket.on('leave', (updatedDocument) => {
+    document.current = updatedDocument
+    setLiveUsers(updatedDocument.currentUsers)
+  })
 
-  socket.on("body", (updatedDocument) => {
-    document.current = updatedDocument;
+  socket.on('body', (updatedDocument) => {
+    document.current = updatedDocument
     if (bodyRef.current) {
-      bodyRef.current.value = updatedDocument.content;
+      bodyRef.current.value = updatedDocument.content
     }
-  });
+  })
 
-  socket.on("name", (updatedDocument) => {
-    document.current = updatedDocument;
+  socket.on('name', (updatedDocument) => {
+    document.current = updatedDocument
     if (nameRef.current) {
-      nameRef.current.value = updatedDocument.name;
+      nameRef.current.value = updatedDocument.name
     }
-  });
+  })
 
-  socket.on("collabeditors", (updatedDocument) => {
-    document.current = updatedDocument;
-    setCollabeditors(updatedDocument.collabeditors);
-  });
+  socket.on('collabeditors', (updatedDocument) => {
+    document.current = updatedDocument
+    setCollabeditors(updatedDocument.collabeditors)
+  })
 
   const textareaOnChange = (e) => {
-    socket.emit("body", {
+    socket.emit('body', {
       document: document.current,
       body: e.target.value,
       // user: currentUser,
-    });
+    })
 
-    cursorLocation.current = "body";
+    cursorLocation.current = 'body'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
-    ];
+    ]
     // setGhostBody();
-  };
+  }
 
   // on mouse or key down
   const textareaMouseKeyDown = (e) => {
-    dragging.current = true;
+    dragging.current = true
 
-    cursorLocation.current = "body";
+    cursorLocation.current = 'body'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
-    ];
+    ]
     // setGhostBody();
-    textareaDraggingScrolling(e);
-  };
+    textareaDraggingScrolling(e)
+  }
 
   // dragging or scrolling
   const textareaDraggingScrolling = (e) => {
-    cursorLocation.current = "body";
+    cursorLocation.current = 'body'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
-    ];
+    ]
     // setGhostBody();
     setTimeout(() => {
       if (dragging.current) {
-        textareaDraggingScrolling(e);
+        textareaDraggingScrolling(e)
       }
-    }, 100);
-  };
+    }, 100)
+  }
 
   // on mouse or key up
   const textareaMouseKeyUp = (e) => {
-    dragging.current = false;
-    cursorLocation.current = "body";
+    dragging.current = false
+    cursorLocation.current = 'body'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
-    ];
+    ]
     // setGhostBody();
-  };
+  }
 
   const setGhostBody = () => {
-    const content = document.current.content;
+    const content = document.current.content
     if (
       // cursor is at 0
       cursorCharLocation.current[0] === 0 &&
       cursorCharLocation.current[0] === cursorCharLocation.current[1]
     ) {
-      ghostBodyRef.current.innerHTML = `<span></span>${content}</>`;
+      ghostBodyRef.current.innerHTML = `<span></span>${content}</>`
 
-      setCursor();
+      setCursor()
     } else if (
       cursorCharLocation.current[0] === cursorCharLocation.current[1]
     ) {
       // cursor is at a single position
       const preCharacter = content.substring(
         0,
-        cursorCharLocation.current[0] - 1
-      );
+        cursorCharLocation.current[0] - 1,
+      )
       const character = content.substring(
         cursorCharLocation.current[0] - 1,
-        cursorCharLocation.current[0]
-      );
+        cursorCharLocation.current[0],
+      )
       const postCharacter = content.substring(
         cursorCharLocation.current[0],
-        content.length
-      );
+        content.length,
+      )
 
-      ghostBodyRef.current.innerHTML = `${preCharacter}<span style="background:red;">${character}</span>${postCharacter}`;
+      ghostBodyRef.current.innerHTML = `${preCharacter}<span style="background:red;">${character}</span>${postCharacter}`
 
-      setCursor();
+      setCursor()
     } else if (
       cursorCharLocation.current[0] === 0 &&
       cursorCharLocation.current[0] !== cursorCharLocation.current[1]
@@ -248,46 +250,46 @@ export default function Document(props) {
       // selection is highlighted from 0 to somewhere
       const textSelection = content.substring(
         0,
-        cursorCharLocation.current[1] - 1
-      ); // keyword selection is taken by the cursor selection
+        cursorCharLocation.current[1] - 1,
+      ) // keyword selection is taken by the cursor selection
       const lastCharacter = content.substring(
         cursorCharLocation.current[1] - 1,
-        cursorCharLocation.current[1]
-      );
+        cursorCharLocation.current[1],
+      )
       const postSelection = content.substring(
         cursorCharLocation.current[1],
-        content.length
-      );
+        content.length,
+      )
 
-      ghostBodyRef.current.innerHTML = `<span></span>${textSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`;
-      setCursor();
+      ghostBodyRef.current.innerHTML = `<span></span>${textSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
+      setCursor()
     } else {
       // selection is highlighted from somewhere to somewhere
       const preSelection = content.substring(
         0,
-        cursorCharLocation.current[0] - 1
-      );
+        cursorCharLocation.current[0] - 1,
+      )
       const firstCharacter = content.substring(
         cursorCharLocation.current[0] - 1,
-        cursorCharLocation.current[0]
-      );
+        cursorCharLocation.current[0],
+      )
       const midSelection = content.substring(
         cursorCharLocation.current[0],
-        cursorCharLocation.current[1] - 1
-      );
+        cursorCharLocation.current[1] - 1,
+      )
       const lastCharacter = content.substring(
         cursorCharLocation.current[1] - 1,
-        cursorCharLocation.current[1]
-      );
+        cursorCharLocation.current[1],
+      )
       const postSelection = content.substring(
         cursorCharLocation.current[1],
-        content.length
-      );
+        content.length,
+      )
 
-      ghostBodyRef.current.innerHTML = `${preSelection}<span style="background:red;">${firstCharacter}</span>${midSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`;
-      setCursor();
+      ghostBodyRef.current.innerHTML = `${preSelection}<span style="background:red;">${firstCharacter}</span>${midSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
+      setCursor()
     }
-  };
+  }
 
   const setCursor = () => {
     if (ghostBodyRef.current.children.length) {
@@ -297,8 +299,8 @@ export default function Document(props) {
           ghostBodyRef.current.children[0]?.offsetWidth,
         ghostBodyRef.current.children[0]?.offsetTop -
           ghostBodyRef.current.offsetTop,
-      ];
-      let position2;
+      ]
+      let position2
       if (ghostBodyRef.current.children.length === 1) {
         // second is same as first
         position2 = [
@@ -306,7 +308,7 @@ export default function Document(props) {
             ghostBodyRef.current.children[0]?.offsetWidth,
           ghostBodyRef.current.children[0]?.offsetTop -
             ghostBodyRef.current.offsetTop,
-        ];
+        ]
       } else {
         // range is selected
         position2 = [
@@ -314,24 +316,23 @@ export default function Document(props) {
             ghostBodyRef.current.children[0]?.offsetWidth,
           ghostBodyRef.current.children[1]?.offsetTop -
             ghostBodyRef.current.offsetTop,
-        ];
+        ]
       }
 
-      cursorPixelLocation.current = [position1, position2];
+      cursorPixelLocation.current = [position1, position2]
     }
-  };
+  }
 
   return (
     <>
       <Header
         document={document}
-        currentUsers={currentUsers}
-        users={users}
         nameRef={nameRef}
         socket={socket}
         collabeditors={collabeditors}
         setCollabeditors={setCollabeditors}
         permissions={permissions}
+        liveUsers={liveUsers}
       />
       <Page>
         <Content>
@@ -341,26 +342,26 @@ export default function Document(props) {
             onMouseUp={textareaMouseKeyUp}
             onKeyDown={(e) => {
               if (
-                e.code === "ArrowUp" ||
-                e.code === "ArrowRight" ||
-                e.code === "ArrowDown" ||
-                e.code === "ArrowLeft"
+                e.code === 'ArrowUp' ||
+                e.code === 'ArrowRight' ||
+                e.code === 'ArrowDown' ||
+                e.code === 'ArrowLeft'
               ) {
-                textareaMouseKeyDown(e);
+                textareaMouseKeyDown(e)
               }
             }}
             onKeyUp={(e) => {
               if (
-                e.code === "ArrowUp" ||
-                e.code === "ArrowRight" ||
-                e.code === "ArrowDown" ||
-                e.code === "ArrowLeft"
+                e.code === 'ArrowUp' ||
+                e.code === 'ArrowRight' ||
+                e.code === 'ArrowDown' ||
+                e.code === 'ArrowLeft'
               ) {
-                textareaMouseKeyUp(e);
+                textareaMouseKeyUp(e)
               }
             }}
             ref={bodyRef}
-            readOnly={permissions === "view" ? true : false}
+            readOnly={permissions === 'view' ? true : false}
           />
           {/* <Cursor
             collabeditor={document.current ? document.current.owner : ""}
@@ -374,5 +375,5 @@ export default function Document(props) {
         </Content>
       </Page>
     </>
-  );
+  )
 }

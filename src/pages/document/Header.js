@@ -1,14 +1,16 @@
-import styled from "styled-components";
-import { useState } from "react";
-import { colors } from "../../styles/styles";
+import styled from 'styled-components'
+import { useContext, useState } from 'react'
+import { colors } from '../../styles/styles'
 
-import { Link } from "react-router-dom";
+import { UserContext } from '../../contexts/UserContext'
 
-import Button from "../../components/Button";
-import Collabeditor from "../../components/Collabeditor";
-import CollabeditorsModal from "./CollabeditorsModal";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoPeople } from "react-icons/io5";
+import { Link } from 'react-router-dom'
+
+import Button from '../../components/Button'
+import Collabeditor from '../../components/Collabeditor'
+import CollabeditorsModal from './CollabeditorsModal'
+import { IoIosArrowBack } from 'react-icons/io'
+import { IoPeople } from 'react-icons/io5'
 
 const Container = styled.div`
   display: flex;
@@ -35,28 +37,22 @@ const Container = styled.div`
   > div:last-of-type {
     margin-top: 32px;
   }
-`;
+`
 
 export default function Header(props) {
-  const {
-    document,
-    users,
-    currentUsers,
-    collabeditors,
-    setCollabeditors,
-    nameRef,
-    socket,
-    permissions,
-  } = props;
+  const { document, liveUsers, collabeditors, nameRef, socket, permissions } =
+    props
 
-  const [collabeditorsOpen, setCollabeditorsOpen] = useState(false);
+  const { users } = useContext(UserContext)
+
+  const [collabeditorsOpen, setCollabeditorsOpen] = useState(false)
 
   const changeName = (e) => {
-    socket.emit("name", {
+    socket.emit('name', {
       document: document.current,
       name: e.target.value,
-    });
-  };
+    })
+  }
 
   return (
     <Container>
@@ -69,15 +65,15 @@ export default function Header(props) {
           placeholder="Document Name"
           onChange={changeName}
           ref={nameRef}
-          readOnly={permissions === "view" ? true : false}
+          readOnly={permissions === 'view' ? true : false}
         />
         {/* <div className="ghostName" ref={ghostNameRef}>
           {ghostNameContent}
         </div> */}
       </div>
       <div>
-        {Object.keys(currentUsers).map((key, i) => {
-          const userId = currentUsers[key].userId;
+        {Object.keys(liveUsers).map((key, i) => {
+          const userId = liveUsers[key].userId
           return (
             <Collabeditor
               collabeditor={userId}
@@ -86,7 +82,7 @@ export default function Header(props) {
               isOwner={document.current.owner === userId ? true : false}
               key={`collabeditor-${i}`}
             />
-          );
+          )
         })}
         {/* <Collabeditor
           collabeditor={document?.owner}
@@ -98,7 +94,7 @@ export default function Header(props) {
           icon={<IoPeople />}
           text="collabeditors"
           onClick={() => {
-            setCollabeditorsOpen(true);
+            setCollabeditorsOpen(true)
           }}
         />
         {collabeditorsOpen && (
@@ -106,12 +102,11 @@ export default function Header(props) {
             document={document}
             collabeditors={collabeditors}
             setShowModal={setCollabeditorsOpen}
-            users={users}
             socket={socket}
             permissions={permissions}
           />
         )}
       </div>
     </Container>
-  );
+  )
 }

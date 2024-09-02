@@ -1,23 +1,24 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import { grays } from "../../styles/styles";
+import { useState, useEffect, useContext } from 'react'
+import styled from 'styled-components'
+import { grays } from '../../styles/styles'
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
-import Collabeditor from "../../components/Collabeditor";
-import Button from "../../components/Button";
+import Collabeditor from '../../components/Collabeditor'
+import Button from '../../components/Button'
 
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt } from 'react-icons/fa'
 
-import { deleteDocument } from "../../server/documents";
-import { getPermissions } from "../../utils";
+import { deleteDocument } from '../../server/documents'
+import { getPermissions } from '../../utils'
+import { UserContext } from '../../contexts/UserContext'
 
 const Container = styled.div`
   width: 100%;
   & > a {
     display: flex !important;
   }
-`;
+`
 
 const Card = styled.div`
   display: grid;
@@ -39,8 +40,7 @@ const Card = styled.div`
       color: ${grays.gray6};
       max-height: 100px;
       overflow: hidden;
-      --max-lines: 5
-      white-space: pre-line;
+      --max-lines: 5 white-space: pre-line;
     }
   }
   > div:not(:first-of-type) {
@@ -63,31 +63,33 @@ const Card = styled.div`
       margin-top: 20px;
     }
   }
-`;
+`
 
 export default function DocumentCard(props) {
-  const { document, documents, setDocuments, users, currentUser } = props;
+  const { document, documents, setDocuments } = props
 
-  const [permissions, setPermissions] = useState(null);
+  const { user, users } = useContext(UserContext)
+
+  const [permissions, setPermissions] = useState(null)
 
   useEffect(() => {
-    setPermissions(getPermissions(document, currentUser));
-  }, []);
+    setPermissions(getPermissions(document, user))
+  }, [])
 
-  const date = new Date(document.updated);
+  const date = new Date(document.updated)
 
-  let hours = date.getHours() % 12;
-  let ampm = "am";
+  let hours = date.getHours() % 12
+  let ampm = 'am'
   if (hours > 12) {
-    ampm = "pm";
+    ampm = 'pm'
   }
   if (hours === 0) {
-    hours = 12;
+    hours = 12
   }
 
-  let minutes = date.getMinutes();
+  let minutes = date.getMinutes()
   if (minutes < 10) {
-    minutes = "0" + minutes;
+    minutes = '0' + minutes
   }
   const dateString = (
     <span>
@@ -96,7 +98,7 @@ export default function DocumentCard(props) {
       {hours}:{minutes}
       {ampm}
     </span>
-  );
+  )
 
   // TODO: truncate document content with ellipsis
   return (
@@ -104,7 +106,7 @@ export default function DocumentCard(props) {
       <Link to={`/document/${document?._id}`}>
         <Card>
           <div>
-            <h3>{document?.name ? document.name : "Unnamed Document"}</h3>
+            <h3>{document?.name ? document.name : 'Unnamed Document'}</h3>
             <p>{document?.content}</p>
             {/* <div>{document?.content}</div> */}
           </div>
@@ -112,15 +114,12 @@ export default function DocumentCard(props) {
             <h6>collabeditors</h6>
             <Collabeditor
               collabeditor={document?.owner}
-              currentUser={currentUser}
               isOwner={true}
-              users={users}
               index={0}
             />
             {document?.collabeditors.map((collabeditor, i) => (
               <Collabeditor
                 collabeditor={collabeditor.id}
-                users={users}
                 index={i + 1}
                 key={`collabeditor-${i + 1}`}
               />
@@ -131,16 +130,16 @@ export default function DocumentCard(props) {
               <h6>updated</h6>
               <p>{dateString}</p>
             </div>
-            {(permissions === "owner" || permissions === "all") && (
+            {(permissions === 'owner' || permissions === 'all') && (
               <Button
                 icon={<FaRegTrashAlt />}
                 onClick={(e) => {
-                  e.preventDefault();
-                  deleteDocument(document?._id);
+                  e.preventDefault()
+                  deleteDocument(document?._id)
                   let documentsList = documents.filter(
-                    (d) => d._id !== document?._id
-                  );
-                  setDocuments(documentsList);
+                    (d) => d._id !== document?._id,
+                  )
+                  setDocuments(documentsList)
                 }}
                 color="red"
               />
@@ -149,5 +148,5 @@ export default function DocumentCard(props) {
         </Card>
       </Link>
     </Container>
-  );
+  )
 }
