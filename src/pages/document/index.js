@@ -37,7 +37,7 @@ const Content = styled.div`
     // to hide cursor and replace with custom ones
     // caret-color: transparent;
   }
-  .ghostBody {
+  .ghostContent {
     display: none;
     width: 100%;
     height: 100px;
@@ -62,7 +62,7 @@ export default function Document(props) {
 
   // content
   const nameRef = useRef()
-  const bodyRef = useRef()
+  const contentRef = useRef()
   const [liveUsers, setLiveUsers] = useState({})
   const [collabeditors, setCollabeditors] = useState([])
 
@@ -74,8 +74,8 @@ export default function Document(props) {
     [1, 1],
   ])
   const dragging = useRef(false)
-  const ghostBodyRef = useRef(null)
-  const ghostBodyContent = useRef('')
+  const ghostContentRef = useRef(null)
+  const ghostContentContent = useRef('')
 
   // everyone's cursors
   const cursorLocations = useRef({})
@@ -126,26 +126,26 @@ export default function Document(props) {
   // when anyone joins, update the document
   socket.on('join', (updatedDocument) => {
     document.current = updatedDocument
-    if (bodyRef.current) {
-      bodyRef.current.value = updatedDocument?.content
+    if (contentRef.current) {
+      contentRef.current.value = updatedDocument?.content
     }
     if (nameRef.current) {
       nameRef.current.value = updatedDocument?.name
     }
-    setLiveUsers(updatedDocument.currentUsers)
+    setLiveUsers(updatedDocument.liveUsers)
     setCollabeditors(updatedDocument.collabeditors)
   })
 
   // when someone leaves, update the live users
   socket.on('leave', (updatedDocument) => {
     document.current = updatedDocument
-    setLiveUsers(updatedDocument.currentUsers)
+    setLiveUsers(updatedDocument.liveUsers)
   })
 
-  socket.on('body', (updatedDocument) => {
+  socket.on('content', (updatedDocument) => {
     document.current = updatedDocument
-    if (bodyRef.current) {
-      bodyRef.current.value = updatedDocument.content
+    if (contentRef.current) {
+      contentRef.current.value = updatedDocument.content
     }
   })
 
@@ -162,41 +162,41 @@ export default function Document(props) {
   })
 
   const textareaOnChange = (e) => {
-    socket.emit('body', {
+    socket.emit('content', {
       document: document.current,
-      body: e.target.value,
+      content: e.target.value,
       // user: currentUser,
     })
 
-    cursorLocation.current = 'body'
+    cursorLocation.current = 'content'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setGhostBody();
+    // setghostContent();
   }
 
   // on mouse or key down
   const textareaMouseKeyDown = (e) => {
     dragging.current = true
 
-    cursorLocation.current = 'body'
+    cursorLocation.current = 'content'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setGhostBody();
+    // setghostContent();
     textareaDraggingScrolling(e)
   }
 
   // dragging or scrolling
   const textareaDraggingScrolling = (e) => {
-    cursorLocation.current = 'body'
+    cursorLocation.current = 'content'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setGhostBody();
+    // setghostContent();
     setTimeout(() => {
       if (dragging.current) {
         textareaDraggingScrolling(e)
@@ -207,22 +207,22 @@ export default function Document(props) {
   // on mouse or key up
   const textareaMouseKeyUp = (e) => {
     dragging.current = false
-    cursorLocation.current = 'body'
+    cursorLocation.current = 'content'
     cursorCharLocation.current = [
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setGhostBody();
+    // setghostContent();
   }
 
-  const setGhostBody = () => {
+  const setghostContent = () => {
     const content = document.current.content
     if (
       // cursor is at 0
       cursorCharLocation.current[0] === 0 &&
       cursorCharLocation.current[0] === cursorCharLocation.current[1]
     ) {
-      ghostBodyRef.current.innerHTML = `<span></span>${content}</>`
+      ghostContentRef.current.innerHTML = `<span></span>${content}</>`
 
       setCursor()
     } else if (
@@ -242,7 +242,7 @@ export default function Document(props) {
         content.length,
       )
 
-      ghostBodyRef.current.innerHTML = `${preCharacter}<span style="background:red;">${character}</span>${postCharacter}`
+      ghostContentRef.current.innerHTML = `${preCharacter}<span style="background:red;">${character}</span>${postCharacter}`
 
       setCursor()
     } else if (
@@ -263,7 +263,7 @@ export default function Document(props) {
         content.length,
       )
 
-      ghostBodyRef.current.innerHTML = `<span></span>${textSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
+      ghostContentRef.current.innerHTML = `<span></span>${textSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
       setCursor()
     } else {
       // selection is highlighted from somewhere to somewhere
@@ -288,36 +288,36 @@ export default function Document(props) {
         content.length,
       )
 
-      ghostBodyRef.current.innerHTML = `${preSelection}<span style="background:red;">${firstCharacter}</span>${midSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
+      ghostContentRef.current.innerHTML = `${preSelection}<span style="background:red;">${firstCharacter}</span>${midSelection}<span style="background:red;">${lastCharacter}</span>${postSelection}`
       setCursor()
     }
   }
 
   const setCursor = () => {
-    if (ghostBodyRef.current.children.length) {
+    if (ghostContentRef.current.children.length) {
       // set first cursor
       const position1 = [
-        ghostBodyRef.current.children[0]?.offsetLeft +
-          ghostBodyRef.current.children[0]?.offsetWidth,
-        ghostBodyRef.current.children[0]?.offsetTop -
-          ghostBodyRef.current.offsetTop,
+        ghostContentRef.current.children[0]?.offsetLeft +
+          ghostContentRef.current.children[0]?.offsetWidth,
+        ghostContentRef.current.children[0]?.offsetTop -
+          ghostContentRef.current.offsetTop,
       ]
       let position2
-      if (ghostBodyRef.current.children.length === 1) {
+      if (ghostContentRef.current.children.length === 1) {
         // second is same as first
         position2 = [
-          ghostBodyRef.current.children[0]?.offsetLeft +
-            ghostBodyRef.current.children[0]?.offsetWidth,
-          ghostBodyRef.current.children[0]?.offsetTop -
-            ghostBodyRef.current.offsetTop,
+          ghostContentRef.current.children[0]?.offsetLeft +
+            ghostContentRef.current.children[0]?.offsetWidth,
+          ghostContentRef.current.children[0]?.offsetTop -
+            ghostContentRef.current.offsetTop,
         ]
       } else {
         // range is selected
         position2 = [
-          ghostBodyRef.current.children[1]?.offsetLeft +
-            ghostBodyRef.current.children[0]?.offsetWidth,
-          ghostBodyRef.current.children[1]?.offsetTop -
-            ghostBodyRef.current.offsetTop,
+          ghostContentRef.current.children[1]?.offsetLeft +
+            ghostContentRef.current.children[0]?.offsetWidth,
+          ghostContentRef.current.children[1]?.offsetTop -
+            ghostContentRef.current.offsetTop,
         ]
       }
 
@@ -362,7 +362,7 @@ export default function Document(props) {
                 textareaMouseKeyUp(e)
               }
             }}
-            ref={bodyRef}
+            ref={contentRef}
             readOnly={permissions === 'view' ? true : false}
           />
           {/* <Cursor
@@ -371,8 +371,8 @@ export default function Document(props) {
             cursorPixelLocation={cursorPixelLocation}
             users={users}
           /> */}
-          <div className="ghostBody" ref={ghostBodyRef}>
-            {ghostBodyContent.current}
+          <div className="ghostContent" ref={ghostContentRef}>
+            {ghostContentContent.current}
           </div>
         </Content>
       </Page>

@@ -21,9 +21,8 @@ This is the application for the Collabeditor app. Follow these instructions to i
 
 ## To Do
 
-- styling broke. fix it.
+- cursor size dependent on font
 - collabeditor cursors
-- keep names across front and back consistent (liveUsers, currentUsers / title, name / etc.)
 - test thoroughly for errors
 - run through files and do a cleanup
 
