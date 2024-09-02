@@ -68,12 +68,13 @@ const Card = styled.div`
 export default function DocumentCard(props) {
   const { document, documents, setDocuments } = props
 
-  const { user, users } = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   const [permissions, setPermissions] = useState(null)
 
   useEffect(() => {
     setPermissions(getPermissions(document, user))
+    // eslint-disable-next-line
   }, [])
 
   const date = new Date(document.updated)

@@ -1,5 +1,8 @@
 import styled from 'styled-components'
 import { colors } from '../../styles/styles'
+import { useContext } from 'react'
+
+import { UserContext } from '../../contexts/UserContext'
 
 const colorsArr = Object.keys(colors).map((key) => [colors[key]])
 
@@ -44,7 +47,9 @@ const Tag = styled.div`
 `
 
 export default function Cursor(props) {
-  const { collabeditor, index, cursorPixelLocation, users } = props
+  const { collabeditor, index, cursorPixelLocation } = props
+
+  const { users } = useContext(UserContext)
 
   // useEffect(() => {}, []);
   // const name = users.filter((user) => user._id === collabeditor)[0].name;

@@ -93,6 +93,7 @@ export default function Document(props) {
     if (user && !documentFetched.current) {
       fetchDocument(params.id)
     }
+    // eslint-disable-next-line
   }, [user])
 
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function Document(props) {
         user: user,
       })
     }
+    // eslint-disable-next-line
   }, [])
 
   const fetchDocument = async (id) => {

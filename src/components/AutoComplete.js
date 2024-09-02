@@ -48,6 +48,7 @@ export default function Autocomplete(props) {
       setValue(selectedCollabeditor?.name)
       setNameSelected(true)
     }
+    // eslint-disable-next-line
   }, [selectedCollabeditor])
 
   const onChange = (e) => {

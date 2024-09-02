@@ -27,6 +27,7 @@ const UserProvider = ({ children }) => {
     if (!isLoading && !isAuthenticated) {
       loginWithRedirect()
     }
+    // eslint-disable-next-line
   }, [isLoading])
 
   const fetchUsers = async () => {
@@ -47,6 +48,7 @@ const UserProvider = ({ children }) => {
         }
       }
     }
+    // eslint-disable-next-line
   }, [users, auth0User]) // upon fetching all users and the auth0 user
 
   const createNewUser = async () => {
