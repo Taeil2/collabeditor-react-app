@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { colors } from "../../styles/styles";
+import styled from 'styled-components'
+import { colors } from '../../styles/styles'
 
-const colorsArr = Object.keys(colors).map((key) => [colors[key]]);
+const colorsArr = Object.keys(colors).map((key) => [colors[key]])
 
 const Line = styled.div`
   position: absolute;
@@ -11,17 +11,17 @@ const Line = styled.div`
   top: ${(props) => `${props.$cursorPixelLocation[0][1]}px`};
   background: ${(props) => {
     if (props.$index < 5) {
-      return colorsArr[props.$index * 2];
+      return colorsArr[props.$index * 2]
     } else {
-      return colorsArr[(props.$index - 5) * 2 + 1];
+      return colorsArr[(props.$index - 5) * 2 + 1]
     }
   }};
-`;
+`
 
 const TagContainer = styled.div`
   position: relative;
   height: 100%;
-`;
+`
 
 const Tag = styled.div`
   position: absolute;
@@ -36,15 +36,15 @@ const Tag = styled.div`
   color: #fff;
   background: ${(props) => {
     if (props.$index < 5) {
-      return colorsArr[props.$index * 2];
+      return colorsArr[props.$index * 2]
     } else {
-      return colorsArr[(props.$index - 5) * 2 + 1];
+      return colorsArr[(props.$index - 5) * 2 + 1]
     }
   }};
-`;
+`
 
 export default function Cursor(props) {
-  const { collabeditor, index, cursorPixelLocation, users } = props;
+  const { collabeditor, index, cursorPixelLocation, users } = props
 
   // useEffect(() => {}, []);
   // const name = users.filter((user) => user._id === collabeditor)[0].name;
@@ -56,5 +56,5 @@ export default function Cursor(props) {
         <Tag $index={index}>test</Tag>
       </TagContainer>
     </Line>
-  );
+  )
 }

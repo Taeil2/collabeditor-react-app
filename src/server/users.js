@@ -1,45 +1,45 @@
-import serverUrl from "./serverUrl";
+import serverUrl from './serverUrl'
 
 const getUsers = async () => {
-  let results = await fetch(`${serverUrl}/users`).then((resp) => resp.json());
-  return results;
-};
+  let results = await fetch(`${serverUrl}/users`).then((resp) => resp.json())
+  return results
+}
 
 const getUser = async (emailAddress) => {
   let result = await fetch(
-    `${serverUrl}/users/user?email=${emailAddress}`
-  ).then((resp) => resp.json());
+    `${serverUrl}/users/user?email=${emailAddress}`,
+  ).then((resp) => resp.json())
 
-  return result;
-};
+  return result
+}
 
 const addUser = async (email, name) => {
   let response = await fetch(`${serverUrl}/users`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
     body: JSON.stringify({
       email,
       name,
     }),
-  }).then((resp) => resp.json());
+  }).then((resp) => resp.json())
 
-  return response;
-};
+  return response
+}
 
 const updateUser = async (name, id) => {
   let response = await fetch(`${serverUrl}/users/${id}`, {
-    method: "PATCH",
+    method: 'PATCH',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
     body: JSON.stringify({
       name,
     }),
-  }).then((resp) => resp.json());
+  }).then((resp) => resp.json())
 
-  return response;
-};
+  return response
+}
 
-export { getUsers, getUser, addUser, updateUser };
+export { getUsers, getUser, addUser, updateUser }

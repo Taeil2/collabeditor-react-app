@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import Button from "./Button";
+import styled from 'styled-components'
+import Button from './Button'
 
-import { IoClose } from "react-icons/io5";
+import { IoClose } from 'react-icons/io5'
 
 const Mask = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ const Mask = styled.div`
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 2;
-`;
+`
 
 const ModalContainer = styled.div`
   border-radius: 5px;
@@ -30,7 +30,7 @@ const ModalContainer = styled.div`
       height: 20px;
     }
   }
-`;
+`
 
 export default function Modal(props) {
   const {
@@ -38,13 +38,13 @@ export default function Modal(props) {
     clickMaskToClose = false,
     closeButton,
     setShowModal = () => {},
-  } = props;
+  } = props
 
   return (
     <Mask
       onClick={(e) => {
-        if (clickMaskToClose && e.target.id === "mask") {
-          setShowModal(false);
+        if (clickMaskToClose && e.target.id === 'mask') {
+          setShowModal(false)
         }
       }}
       id="mask"
@@ -55,7 +55,7 @@ export default function Modal(props) {
           <Button
             icon={<IoClose />}
             onClick={() => {
-              setShowModal(false);
+              setShowModal(false)
             }}
             color="transparent"
             className="closeButton"
@@ -63,5 +63,5 @@ export default function Modal(props) {
         )}
       </ModalContainer>
     </Mask>
-  );
+  )
 }

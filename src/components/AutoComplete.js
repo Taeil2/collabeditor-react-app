@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
+import { useState, useRef, useEffect } from 'react'
+import styled from 'styled-components'
 
-import { grays, colors } from "../styles/styles";
+import { grays, colors } from '../styles/styles'
 
 const Container = styled.div`
   position: relative;
-`;
+`
 
 const Options = styled.div`
   position: absolute;
@@ -28,7 +28,7 @@ const Options = styled.div`
   & > div.selected {
     background: ${colors.lightCyan};
   }
-`;
+`
 
 export default function Autocomplete(props) {
   const {
@@ -38,89 +38,89 @@ export default function Autocomplete(props) {
     setNameSelected,
     selectedCollabeditor,
     setSelectedCollabeditor,
-  } = props;
-  const [autocompleteList, setAutocompleteList] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const optionsRef = useRef();
+  } = props
+  const [autocompleteList, setAutocompleteList] = useState([])
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+  const optionsRef = useRef()
 
   useEffect(() => {
     if (selectedCollabeditor?.name) {
-      setValue(selectedCollabeditor?.name);
-      setNameSelected(true);
+      setValue(selectedCollabeditor?.name)
+      setNameSelected(true)
     }
-  }, [selectedCollabeditor]);
+  }, [selectedCollabeditor])
 
   const onChange = (e) => {
-    setValue(e.target.value);
+    setValue(e.target.value)
     if (e.target.value.length) {
       setAutocompleteList(
         options.filter((option) =>
-          option.name.toLowerCase().includes(e.target.value.toLowerCase())
-        )
-      );
+          option.name.toLowerCase().includes(e.target.value.toLowerCase()),
+        ),
+      )
       const matchedCollabeditor = options.filter(
-        (option) => option.name.toLowerCase() === e.target.value
-      )[0];
+        (option) => option.name.toLowerCase() === e.target.value,
+      )[0]
       if (matchedCollabeditor) {
-        setSelectedCollabeditor(matchedCollabeditor);
-        setNameSelected(true);
+        setSelectedCollabeditor(matchedCollabeditor)
+        setNameSelected(true)
       } else {
-        setSelectedCollabeditor({});
-        setNameSelected(false);
+        setSelectedCollabeditor({})
+        setNameSelected(false)
       }
     } else {
-      setAutocompleteList([]);
-      setSelectedCollabeditor({});
+      setAutocompleteList([])
+      setSelectedCollabeditor({})
     }
-    setSelectedIndex(-1);
-  };
+    setSelectedIndex(-1)
+  }
 
   const onKeyDown = (e) => {
-    if (e.code === "ArrowUp") {
+    if (e.code === 'ArrowUp') {
       if (selectedIndex > 0) {
         // caps at the top
-        setSelectedIndex(selectedIndex - 1);
+        setSelectedIndex(selectedIndex - 1)
       }
-    } else if (e.code === "ArrowDown") {
+    } else if (e.code === 'ArrowDown') {
       if (selectedIndex < autocompleteList.length - 1) {
         // caps at the bottom
-        setSelectedIndex(selectedIndex + 1);
+        setSelectedIndex(selectedIndex + 1)
       }
-    } else if (e.code === "Enter") {
+    } else if (e.code === 'Enter') {
       if (autocompleteList.length && selectedIndex !== -1) {
-        const optionsDivs = optionsRef.current.children;
+        const optionsDivs = optionsRef.current.children
         for (let div of optionsDivs) {
-          if (div.className === "selected") {
+          if (div.className === 'selected') {
             setSelectedCollabeditor(
               options.filter(
-                (option) => option.name.toLowerCase() === div.innerHTML
-              )[0]
-            );
+                (option) => option.name.toLowerCase() === div.innerHTML,
+              )[0],
+            )
             // close autocomplete
-            setSelectedIndex(-1);
-            setAutocompleteList([]);
+            setSelectedIndex(-1)
+            setAutocompleteList([])
           }
         }
       } else {
         // submit form
       }
     }
-  };
+  }
 
   const onMouseEnter = (e) => {
-    setSelectedIndex(e._targetInst.index);
-  };
+    setSelectedIndex(e._targetInst.index)
+  }
 
   const onSelect = (e) => {
     setSelectedCollabeditor(
       options.filter(
-        (option) => option.name.toLowerCase() === e.target.innerHTML
-      )[0]
-    );
+        (option) => option.name.toLowerCase() === e.target.innerHTML,
+      )[0],
+    )
     // close autocomplete
-    setSelectedIndex(-1);
-    setAutocompleteList([]);
-  };
+    setSelectedIndex(-1)
+    setAutocompleteList([])
+  }
 
   return (
     <Container>
@@ -139,14 +139,14 @@ export default function Autocomplete(props) {
                 onMouseEnter={onMouseEnter}
                 onClick={onSelect}
                 key={`option-${i}`}
-                className={i === selectedIndex ? "selected" : ""}
+                className={i === selectedIndex ? 'selected' : ''}
               >
                 {item.name}
               </div>
-            );
+            )
           })}
         </Options>
       )}
     </Container>
-  );
+  )
 }
