@@ -4,7 +4,7 @@ const getPermissions = (document, user) => {
   } else {
     let permissions
     document.collabeditors.forEach((collabeditor) => {
-      if (collabeditor.id === user._id) {
+      if (collabeditor._id === user._id) {
         permissions = collabeditor.permissions
       }
     })

@@ -1,7 +1,7 @@
 import serverUrl from './serverUrl'
 
 const getDocuments = async (userId) => {
-  let results = await fetch(`${serverUrl}/documents?id=${userId}`).then(
+  let results = await fetch(`${serverUrl}/documents?_id=${userId}`).then(
     (resp) => resp.json(),
   )
 
@@ -15,7 +15,7 @@ const addDocument = async (userId) => {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      id: userId,
+      _id: userId,
     }),
   }).then((resp) => resp.json())
 
@@ -30,8 +30,8 @@ const getDocument = async (documentId) => {
   return result
 }
 
-const updateDocument = async (update, id) => {
-  let response = await fetch(`${serverUrl}/documents/${id}`, {
+const updateDocument = async (update, documentId) => {
+  let response = await fetch(`${serverUrl}/documents/${documentId}`, {
     method: 'PATCH',
     headers: {
       'content-type': 'application/json',
@@ -42,8 +42,8 @@ const updateDocument = async (update, id) => {
   return response
 }
 
-const deleteDocument = async (id) => {
-  await fetch(`${serverUrl}/documents/${id}`, {
+const deleteDocument = async (documentId) => {
+  await fetch(`${serverUrl}/documents/${documentId}`, {
     method: 'DELETE',
   })
 }

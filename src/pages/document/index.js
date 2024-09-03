@@ -91,7 +91,7 @@ export default function Document(props) {
   // when the user has loaded, fetch the document
   useEffect(() => {
     if (user && !documentFetched.current) {
-      fetchDocument(params.id)
+      fetchDocument(params._id)
     }
     // eslint-disable-next-line
   }, [user])
@@ -112,8 +112,8 @@ export default function Document(props) {
     // eslint-disable-next-line
   }, [])
 
-  const fetchDocument = async (id) => {
-    const fetchedDocument = await getDocument(id)
+  const fetchDocument = async (_id) => {
+    const fetchedDocument = await getDocument(_id)
 
     setPermissions(getPermissions(fetchedDocument, user))
 
@@ -173,7 +173,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setghostContent();
+    // setGhostContent();
   }
 
   // on mouse or key down
@@ -185,7 +185,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setghostContent();
+    // setGhostContent();
     textareaDraggingScrolling(e)
   }
 
@@ -196,7 +196,7 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setghostContent();
+    // setGhostContent();
     setTimeout(() => {
       if (dragging.current) {
         textareaDraggingScrolling(e)
@@ -212,10 +212,10 @@ export default function Document(props) {
       e.target.selectionStart,
       e.target.selectionEnd,
     ]
-    // setghostContent();
+    // setGhostContent();
   }
 
-  const setghostContent = () => {
+  const setGhostContent = () => {
     const content = document.current.content
     if (
       // cursor is at 0

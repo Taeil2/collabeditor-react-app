@@ -62,11 +62,11 @@ export default function CollabeditorsModal(props) {
 
   const updatePermissions = (e, collabeditor) => {
     const updatedCollabeditors = document.current.collabeditors.map((c) => {
-      if (c.id !== collabeditor.id) {
+      if (c._id !== collabeditor._id) {
         return c
       } else {
         return {
-          id: c.id,
+          _id: c._id,
           permissions: e.target.value,
         }
       }
@@ -80,7 +80,7 @@ export default function CollabeditorsModal(props) {
 
   const removeCollabeditor = (e, collabeditor) => {
     const updatedCollabeditors = document.current.collabeditors.filter(
-      (c) => c.id !== collabeditor.id,
+      (c) => c._id !== collabeditor._id,
     )
 
     socket.emit('collabeditors', {
@@ -95,7 +95,7 @@ export default function CollabeditorsModal(props) {
 
     const updatedCollabeditors = [
       ...document.current.collabeditors,
-      { id: selectedCollabeditor._id, permissions: addPermissions },
+      { _id: selectedCollabeditor._id, permissions: addPermissions },
     ]
 
     socket.emit('collabeditors', {
@@ -147,7 +147,7 @@ export default function CollabeditorsModal(props) {
                 showTag={false}
               /> */}
               <div className="name">
-                {users?.filter((user) => user._id === collabeditor.id)[0].name}
+                {users?.filter((user) => user._id === collabeditor._id)[0].name}
               </div>
               {permissions !== 'view' && (
                 <select

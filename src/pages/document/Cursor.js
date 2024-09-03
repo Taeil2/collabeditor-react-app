@@ -52,7 +52,7 @@ export default function Cursor(props) {
   const { users } = useContext(UserContext)
 
   // useEffect(() => {}, []);
-  // const name = users.filter((user) => user._id === collabeditor)[0].name;
+  // const name = users.filter((u) => u._id === collabeditor)[0].name;
 
   return (
     <Line $index={index} $cursorPixelLocation={cursorPixelLocation.current}>

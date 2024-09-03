@@ -26,7 +26,7 @@ export default function App() {
           <BrowserRouter basename="/">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="document/:id" element={<Document />} />
+              <Route path="document/:_id" element={<Document />} />
             </Routes>
           </BrowserRouter>
         )}
