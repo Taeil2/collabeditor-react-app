@@ -27,8 +27,8 @@ const Content = styled.div`
   position: relative;
   textarea {
     width: 100%;
-    height: 1058.82353px; // 9 inch height: 1000px / 8.5 * 9
-    // height: 100px;
+    // height: 1058.82353px; // 9 inch height: 1000px / 8.5 * 9
+    height: 100px;
     resize: none;
     border: 0;
     border: 1px solid #eee;
@@ -53,7 +53,7 @@ const socket = io(serverUrl, {
 
 // TODO: polish cursor tracking
 export default function Document(props) {
-  const { user } = useContext(UserContext)
+  const { user, users } = useContext(UserContext)
 
   // document
   const documentFetched = useRef(false)
@@ -365,12 +365,12 @@ export default function Document(props) {
             ref={contentRef}
             readOnly={permissions === 'view' ? true : false}
           />
-          {/* <Cursor
-            collabeditor={document.current ? document.current.owner : ""}
+          <Cursor
+            collabeditor={document.current ? document.current.owner : ''}
             index={1}
             cursorPixelLocation={cursorPixelLocation}
             users={users}
-          /> */}
+          />
           <div className="ghostContent" ref={ghostContentRef}>
             {ghostContentContent.current}
           </div>

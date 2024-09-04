@@ -21,8 +21,9 @@ This is the application for the Collabeditor app. Follow these instructions to i
 
 ## To Do
 
-- cursor size dependent on font
+- textarea vs div
 - collabeditor cursors
+- cursor size dependent on font
 - test thoroughly for errors
 - run through files and do a cleanup
 

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import Home from './pages/index'
 import Document from './pages/document'
+import DivTextarea from './pages/document/DivTextarea'
 
 import GlobalStyles from './styles/global'
 
@@ -27,6 +28,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="document/:_id" element={<Document />} />
+              <Route path="divtextarea/:_id" element={<DivTextarea />} />
             </Routes>
           </BrowserRouter>
         )}
