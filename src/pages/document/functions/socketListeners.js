@@ -1,46 +1,24 @@
-const socketListeners = (
-  socket,
-  contentRef,
-  nameRef,
-  setLiveUsers,
-  setCollabeditors,
-) => {
+const socketListeners = (socket, document, setDocument) => {
   // when anyone joins, update the document
   socket.on('join', (updatedDocument) => {
-    document.current = updatedDocument
-    if (contentRef.current) {
-      contentRef.current.value = updatedDocument?.content
-    }
-    if (nameRef.current) {
-      nameRef.current.value = updatedDocument?.name
-    }
-    setLiveUsers(updatedDocument.liveUsers)
-    setCollabeditors(updatedDocument.collabeditors)
+    setDocument(updatedDocument)
   })
 
   // when someone leaves, update the live users
   socket.on('leave', (updatedDocument) => {
-    document.current = updatedDocument
-    setLiveUsers(updatedDocument.liveUsers)
+    setDocument(updatedDocument)
   })
 
   socket.on('content', (updatedDocument) => {
-    document.current = updatedDocument
-    if (contentRef.current) {
-      contentRef.current.value = updatedDocument.content
-    }
+    setDocument(updatedDocument)
   })
 
   socket.on('name', (updatedDocument) => {
-    document.current = updatedDocument
-    if (nameRef.current) {
-      nameRef.current.value = updatedDocument.name
-    }
+    setDocument(updatedDocument)
   })
 
   socket.on('collabeditors', (updatedDocument) => {
-    document.current = updatedDocument
-    setCollabeditors(updatedDocument.collabeditors)
+    setDocument(updatedDocument)
   })
 }
 

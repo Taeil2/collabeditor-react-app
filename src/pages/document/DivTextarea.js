@@ -13,12 +13,7 @@ import { getPermissions } from '../../utils'
 
 import { UserContext } from '../../contexts/UserContext'
 
-import {
-  onMouseUp,
-  onMouseDown,
-  draggingOrScrolling,
-  onMouseOrKeyUp,
-} from './functions/mouse'
+import { onMouseUp, onMouseDown, onMouseOrKeyUp } from './functions/mouse'
 import socketListeners from './functions/socketListeners'
 
 const Page = styled.div`
@@ -53,6 +48,7 @@ const CustomTextarea = styled.div`
   border: 1px solid #eee;
   font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
   font-size: 14px;
+  cursor: text;
 `
 
 // socket needs to be declared outside of the function
@@ -63,31 +59,12 @@ const socket = io(serverUrl, {
 export default function DivTextarea(props) {
   const { user, users } = useContext(UserContext)
 
-  // document
   const documentFetched = useRef(false)
-  const document = useRef({ content: '' })
+  const [document, setDocument] = useState({ _id: '', content: '' })
   const [permissions, setPermissions] = useState(null)
-
-  // content
-  const nameRef = useRef()
-  const contentRef = useRef()
-  const [content, setContent] = useState('')
-  // const content = useRef(<>Hi</>)
-  const [contentFocused, setContentFocused] = useState(true)
-  const [liveUsers, setLiveUsers] = useState({})
-  const [collabeditors, setCollabeditors] = useState([])
-
-  // track own cursor
-  const cursorLocation = useRef('header')
-  const cursorCharLocation = useRef([0, 0])
-  const cursorPixelLocation = useRef([
-    [1, 1],
-    [1, 1],
-  ])
   const dragging = useRef(false)
 
-  // everyone's cursors
-  const cursorLocations = useRef({})
+  console.log(document)
 
   // scroll to top and connect to socket.io on load
   useEffect(() => {
@@ -103,13 +80,13 @@ export default function DivTextarea(props) {
     // on disconnect, leave the socket.io room
     return () => {
       socket.emit('leave', {
-        document: document.current,
+        document: document,
         user: user,
       })
     }
     // eslint-disable-next-line
   }, [])
-  socketListeners(socket, contentRef, nameRef, setLiveUsers, setCollabeditors)
+  socketListeners(socket, document, setDocument)
 
   // when the user has loaded, fetch the document
   const params = useParams()
@@ -121,63 +98,62 @@ export default function DivTextarea(props) {
   }, [user])
 
   useEffect(() => {
-    window.addEventListener('keydown', (e) => {
-      if (contentFocused) {
-        if (
-          e.code === 'ArrowUp' ||
-          e.code === 'ArrowRight' ||
-          e.code === 'ArrowDown' ||
-          e.code === 'ArrowLeft'
-        ) {
-          onArrowDown(e)
-        } else {
-          onKeyDown(e)
-        }
+    const handleKeyDown = (e) => {
+      if (
+        [
+          'Tab',
+          'CapsLock',
+          'Shift',
+          'Control',
+          'Alt',
+          'Meta',
+          'Escape',
+        ].includes(e.key)
+      ) {
+        // ignore
+      } else if (
+        [
+          'F1',
+          'F2',
+          'F3',
+          'F4',
+          'F5',
+          'F6',
+          'F7',
+          'F8',
+          'F9',
+          'F10',
+          'F11',
+          'F12',
+        ].includes(e.key)
+      ) {
+        // ignore F keys
+      } else if (
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowLeft'
+      ) {
+        // onMouseOrKeyUp(e)
+      } else if (e.key === 'Backspace') {
+        // remove a character
+      } else if (e.key === 'Enter') {
+        // add a return
+      } else {
+        // normal key
       }
-    })
-    window.addEventListener('keyup', (e) => {
-      if (contentFocused) {
-        if (
-          e.code === 'ArrowUp' ||
-          e.code === 'ArrowRight' ||
-          e.code === 'ArrowDown' ||
-          e.code === 'ArrowLeft'
-        ) {
-          onMouseOrKeyUp(e)
-        }
-      }
-    })
+      console.log(e.key)
+
+      // socket.emit('content', {
+      //   document: document,
+      //   content: "e.target.value",
+      // })
+    }
+    window.addEventListener('keydown', handleKeyDown, true)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
   }, [])
-
-  const onArrowDown = (e) => {
-    // do this later
-    cursorLocation.current = 'content'
-    cursorCharLocation.current = [
-      e.target.selectionStart,
-      e.target.selectionEnd,
-    ]
-  }
-
-  const onKeyDown = (e) => {
-    // socket.emit('content', {
-    //   document: document.current,
-    //   content: e.target.value,
-    //   // user: currentUser,
-    // })
-
-    // let pastContent = content
-    // console.log(content)
-    setContent(content + e.key)
-    // setContent("test" += e.key)
-    // content.current += e.key
-    // contentRef.current.value = content.current
-
-    cursorLocation.current = 'content'
-    cursorCharLocation.current = [
-      e.target.selectionStart,
-      e.target.selectionEnd,
-    ]
-  }
 
   const fetchDocument = async (_id) => {
     const fetchedDocument = await getDocument(_id)
@@ -194,29 +170,18 @@ export default function DivTextarea(props) {
     <>
       <Header
         document={document}
-        nameRef={nameRef}
         socket={socket}
-        collabeditors={collabeditors}
-        setCollabeditors={setCollabeditors}
-        permissions={permissions}
-        liveUsers={liveUsers}
+        // permissions={permissions}
       />
       <Page>
         <Content>
           <CustomTextarea
-            ref={contentRef}
             // onChange={textareaOnChange}
             onMouseDown={(e) => {
-              onMouseDown(
-                e,
-                setContentFocused,
-                dragging,
-                cursorLocation,
-                cursorCharLocation,
-              )
+              onMouseDown(e, dragging)
             }}
             onMouseUp={(e) => {
-              onMouseUp(e, dragging, cursorLocation, cursorCharLocation)
+              onMouseUp(e, dragging)
             }}
             onCopy={(e) => {
               console.log('onCopy', e)
@@ -224,42 +189,25 @@ export default function DivTextarea(props) {
             onPaste={(e) => {
               console.log('onPaste', e)
             }}
-            // ref={contentRef}
             readOnly={permissions === 'view' ? true : false}
           >
-            {content}
+            {document.content.split('').map((letter, i) => (
+              <span
+                onClick={(e) => {
+                  console.log(e)
+                }}
+                key={i}
+              >
+                {letter}
+              </span>
+            ))}
           </CustomTextarea>
-          <textarea
-            ref={contentRef}
-            // onChange={textareaOnChange}
-            onMouseDown={(e) => {
-              onMouseDown(
-                e,
-                setContentFocused,
-                dragging,
-                cursorLocation,
-                cursorCharLocation,
-              )
-            }}
-            onMouseUp={(e) => {
-              onMouseUp(e, dragging, cursorLocation, cursorCharLocation)
-            }}
-            onCopy={(e) => {
-              console.log('onCopy', e)
-            }}
-            onPaste={(e) => {
-              console.log('onPaste', e)
-            }}
-            // ref={contentRef}
-            readOnly={permissions === 'view' ? true : false}
-            value={content}
-          />
-          <Cursor
+          {/* <Cursor
             collabeditor={document.current ? document.current.owner : ''}
             index={1}
             cursorPixelLocation={cursorPixelLocation}
             users={users}
-          />
+          /> */}
         </Content>
       </Page>
     </>

@@ -40,8 +40,7 @@ const Container = styled.div`
 `
 
 export default function Header(props) {
-  const { document, liveUsers, collabeditors, nameRef, socket, permissions } =
-    props
+  const { document, socket, permissions } = props
 
   const { users } = useContext(UserContext)
 
@@ -49,7 +48,7 @@ export default function Header(props) {
 
   const changeName = (e) => {
     socket.emit('name', {
-      document: document.current,
+      document: document,
       name: e.target.value,
     })
   }
@@ -64,15 +63,15 @@ export default function Header(props) {
           type="text"
           placeholder="Document Name"
           onChange={changeName}
-          ref={nameRef}
           readOnly={permissions === 'view' ? true : false}
+          value={document.name}
         />
         {/* <div className="ghostName" ref={ghostNameRef}>
           {ghostNameContent}
         </div> */}
       </div>
       <div>
-        {Object.keys(liveUsers).map((key, i) => {
+        {/* {Object.keys(liveUsers).map((key, i) => {
           const userId = liveUsers[key].userId
           return (
             <Collabeditor
@@ -83,7 +82,7 @@ export default function Header(props) {
               key={`collabeditor-${i}`}
             />
           )
-        })}
+        })} */}
         {/* <Collabeditor
           collabeditor={document?.owner}
           users={users}
@@ -100,7 +99,6 @@ export default function Header(props) {
         {collabeditorsOpen && (
           <CollabeditorsModal
             document={document}
-            collabeditors={collabeditors}
             setShowModal={setCollabeditorsOpen}
             socket={socket}
             permissions={permissions}

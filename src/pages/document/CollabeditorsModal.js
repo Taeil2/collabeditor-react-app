@@ -50,7 +50,7 @@ const Form = styled.form`
 `
 
 export default function CollabeditorsModal(props) {
-  const { document, collabeditors, setShowModal, socket, permissions } = props
+  const { document, setShowModal, socket, permissions } = props
 
   const { users } = useContext(UserContext)
 
@@ -61,7 +61,7 @@ export default function CollabeditorsModal(props) {
   const [nameSelected, setNameSelected] = useState(false)
 
   const updatePermissions = (e, collabeditor) => {
-    const updatedCollabeditors = document.current.collabeditors.map((c) => {
+    const updatedCollabeditors = document.collabeditors.map((c) => {
       if (c._id !== collabeditor._id) {
         return c
       } else {
@@ -73,7 +73,7 @@ export default function CollabeditorsModal(props) {
     })
 
     socket.emit('collabeditors', {
-      document: document.current,
+      document: document,
       collabeditors: updatedCollabeditors,
     })
   }
@@ -84,7 +84,7 @@ export default function CollabeditorsModal(props) {
     )
 
     socket.emit('collabeditors', {
-      document: document.current,
+      document: document,
       collabeditors: updatedCollabeditors,
     })
   }
@@ -99,7 +99,7 @@ export default function CollabeditorsModal(props) {
     ]
 
     socket.emit('collabeditors', {
-      document: document.current,
+      document: document,
       collabeditors: updatedCollabeditors,
     })
 
@@ -138,7 +138,7 @@ export default function CollabeditorsModal(props) {
             <div>owner</div>
             <div></div>
           </CollabeditorRow>
-          {collabeditors.map((collabeditor, i) => (
+          {document.collabeditors.map((collabeditor, i) => (
             <CollabeditorRow key={`collabeditor-${i}`}>
               {/* <Collabeditor
                 collabeditor={collabeditor}
