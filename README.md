@@ -21,8 +21,20 @@ This is the application for the Collabeditor app. Follow these instructions to i
 
 ## To Do
 
-- textarea vs div
+- socket.io
+  - connect to socket.io on app load
+  - connect to rooms on document open
+  - leave rooms on document close
+  - disconnect from socket.io when leaving the application
+- div textarea
+  - fully typable
+  - copy and paste
+
+
+
 - collabeditor cursors
+  - 
+
 - cursor size dependent on font
 - test thoroughly for errors
 - run through files and do a cleanup

@@ -9,6 +9,11 @@ const socketListeners = (socket, document, setDocument) => {
     setDocument(updatedDocument)
   })
 
+  socket.on('edit', (updatedDocument) => {
+    setDocument(updatedDocument)
+    // console.log(updatedDocument.liveUsers)
+  })
+
   socket.on('content', (updatedDocument) => {
     setDocument(updatedDocument)
   })

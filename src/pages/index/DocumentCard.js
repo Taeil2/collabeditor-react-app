@@ -83,7 +83,8 @@ export default function DocumentCard(props) {
   // TODO: truncate document content with ellipsis
   return (
     <Container>
-      <Link to={`/document/${document?._id}`}>
+      {/* <Link to={`/document/${document?._id}`}> */}
+      <Link to={`/divtextarea/${document?._id}`}>
         <Card>
           <div>
             <h3>{document?.name ? document.name : 'Unnamed Document'}</h3>

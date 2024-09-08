@@ -42,15 +42,26 @@ const Container = styled.div`
 export default function Header(props) {
   const { document, socket, permissions } = props
 
-  const { users } = useContext(UserContext)
+  const { user, users } = useContext(UserContext)
 
   const [collabeditorsOpen, setCollabeditorsOpen] = useState(false)
 
   const changeName = (e) => {
-    socket.emit('name', {
-      document: document,
+    const updatedDocument = {
+      ...document,
       name: e.target.value,
-    })
+    }
+    updatedDocument.liveUsers[socket.id] = {
+      cursorIndex: [0, 0],
+      cursorLocation: 'name',
+      userId: user._id, // same
+    }
+
+    socket.emit('edit', updatedDocument)
+    // socket.emit('name', {
+    //   document: document,
+    //   name: e.target.value,
+    // })
   }
 
   return (
@@ -65,6 +76,7 @@ export default function Header(props) {
           onChange={changeName}
           readOnly={permissions === 'view' ? true : false}
           value={document.name}
+          onClick={() => {}}
         />
         {/* <div className="ghostName" ref={ghostNameRef}>
           {ghostNameContent}

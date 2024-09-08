@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext } from 'react'
+import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -64,8 +64,6 @@ export default function DivTextarea(props) {
   const [permissions, setPermissions] = useState(null)
   const dragging = useRef(false)
 
-  console.log(document)
-
   // scroll to top and connect to socket.io on load
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -97,8 +95,13 @@ export default function DivTextarea(props) {
     // eslint-disable-next-line
   }, [user])
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
+  // console.log('document', document)
+  // console.log('user', user)
+
+  const onKeyDown = useCallback(
+    (e) => {
+      let updatedDocument
+      // if key is to be ignored, just return
       if (
         [
           'Tab',
@@ -111,6 +114,7 @@ export default function DivTextarea(props) {
         ].includes(e.key)
       ) {
         // ignore
+        return
       } else if (
         [
           'F1',
@@ -128,32 +132,63 @@ export default function DivTextarea(props) {
         ].includes(e.key)
       ) {
         // ignore F keys
-      } else if (
-        e.key === 'ArrowUp' ||
-        e.key === 'ArrowRight' ||
-        e.key === 'ArrowDown' ||
-        e.key === 'ArrowLeft'
-      ) {
-        // onMouseOrKeyUp(e)
-      } else if (e.key === 'Backspace') {
-        // remove a character
-      } else if (e.key === 'Enter') {
-        // add a return
       } else {
-        // normal key
+        // otherwise...
+        updatedDocument = {
+          ...document,
+        }
+        if (
+          e.key === 'ArrowUp' ||
+          e.key === 'ArrowRight' ||
+          e.key === 'ArrowDown' ||
+          e.key === 'ArrowLeft'
+        ) {
+          // if (
+          //   e.altKey
+          //   e.ctrlKey
+          //   e.metaKey
+          //   e.shiftKey {
+          //     // to do later
+          //   }
+          // onMouseOrKeyUp(e)
+          updatedDocument.liveUsers[socket.id] = {
+            cursorIndex: [
+              document.liveUsers[socket.id] - 1,
+              document.liveUsers[socket.id] - 1,
+            ],
+            cursorLocation: 'content',
+            userId: user._id, // same
+          }
+        } else if (e.key === 'Backspace') {
+          if (e.metaKey) {
+            // delete entire line
+          } else if (e.altKey) {
+            // delete last word
+          } else {
+            updatedDocument.content = document.content.slice(0, -1)
+          }
+        } else if (e.key === 'Enter') {
+          // add a return
+          updatedDocument.content += '\n'
+        } else if (e.key === ' ') {
+          e.preventDefault()
+          updatedDocument.content += e.key
+        } else {
+          // normal key
+          updatedDocument.content += e.key
+        }
+        socket.emit('edit', updatedDocument)
       }
-      console.log(e.key)
+    },
+    [document, user],
+  )
 
-      // socket.emit('content', {
-      //   document: document,
-      //   content: "e.target.value",
-      // })
-    }
-    window.addEventListener('keydown', handleKeyDown, true)
+  useEffect(() => {
+    window.addEventListener('keydown', onKeyDown)
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keydown', onKeyDown)
     }
-  }, [])
+  }, [onKeyDown])
 
   const fetchDocument = async (_id) => {
     const fetchedDocument = await getDocument(_id)
@@ -177,6 +212,23 @@ export default function DivTextarea(props) {
         <Content>
           <CustomTextarea
             // onChange={textareaOnChange}
+            onClick={(e) => {
+              if (!e.target.matches('span')) {
+                // console.log(document, user)
+                const updatedDocument = {
+                  ...document,
+                }
+                updatedDocument.liveUsers[socket.id] = {
+                  cursorIndex: [
+                    document.content.length,
+                    document.content.length,
+                  ],
+                  cursorLocation: 'content',
+                  userId: user.id, // same
+                }
+                socket.emit('edit', updatedDocument)
+              }
+            }}
             onMouseDown={(e) => {
               onMouseDown(e, dragging)
             }}
@@ -202,12 +254,12 @@ export default function DivTextarea(props) {
               </span>
             ))}
           </CustomTextarea>
-          {/* <Cursor
+          <Cursor
             collabeditor={document.current ? document.current.owner : ''}
             index={1}
             cursorPixelLocation={cursorPixelLocation}
             users={users}
-          /> */}
+          />
         </Content>
       </Page>
     </>
